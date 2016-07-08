@@ -2,8 +2,8 @@ public class MicroOperacoes {
 
 	private static boolean indirecao;
 	private static String op;
-//	private static Registrador p1;
-//	private static Registrador p2;
+	private static Registrador p1;
+	private static Registrador p2;
 	private static String texto;
 
 	public static void Busca() {
@@ -18,14 +18,14 @@ public class MicroOperacoes {
 			break;
 
 		case "MOV":
-//			if (p1.getNome().contains("[")) {
-//
-//			} else if (p2.getNome().contains("[")) {
-//
-//			} else {
-//				texto = "t1: " + p1.getNome() + " <-- " + p2.getNome() + " ( " + p1.getEntrada() + " , "
-//						+ p2.getEntrada() + ")" + "\n";
-//			}
+			if (p1.getNome().contains("[")) {
+
+			} else if (p2.getNome().contains("[")) {
+
+			} else {
+				texto = "t1: " + p1.getNome() + " <-- " + p2.getNome() + " ( " + p1.getEntrada() + " , "
+						+ p2.getEntrada() + ")" + "\n";
+			}
 			break;
 
 		case "SUB":
@@ -49,19 +49,19 @@ public class MicroOperacoes {
 	}
 
 	public static void Indirecao() {
-//		if (p1.getNome().contains("["))
-//			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
-//					+ "t3: IR(p1) <-- MBR (16, 5)";
-//
-//		if (p2.getNome().contains("["))
-//			texto = "t1: MAR <-- IR(p2) (3 , 13) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
-//					+ "t3: IR(p2) <-- MBR (14, 5)";
+		if (p1.getNome().contains("["))
+			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
+					+ "t3: IR(p1) <-- MBR (16, 5)";
+
+		if (p2.getNome().contains("["))
+			texto = "t1: MAR <-- IR(p2) (3 , 13) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
+					+ "t3: IR(p2) <-- MBR (14, 5)";
 	}
 
-//	public MicroOperacoes(String op, Registrador p1, Registrador p2, boolean ind) {
-//		this.op = op;
-//		this.p1 = p1;
-//		this.p2 = p2;
-//		this.indirecao = ind;
-//	}
+	public MicroOperacoes(String op, Registrador p1, Registrador p2, boolean ind) {
+		this.op = op;
+		this.p1 = p1;
+		this.p2 = p2;
+		this.indirecao = ind;
+	}
 }

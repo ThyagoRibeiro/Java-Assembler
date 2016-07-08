@@ -2,14 +2,14 @@ package util;
 
 public class Conversoes {
 
-	public static int bin2dec(String number) {
+	public static int bin2dec(int number) {
 
-		return Integer.parseInt(number, 2);
+		return Integer.parseInt(Integer.toString(number), 2);
 	}
 
-	public static String bin2hex(String number) {
+	public static int bin2hex(int number) {
 
-		return dec2hex(Integer.parseInt(number, 2)).toUpperCase();
+		return dec2hex(Integer.parseInt(Integer.toString(number), 2));
 	}
 
 	public static int dec2bin(int number) {
@@ -17,19 +17,19 @@ public class Conversoes {
 		return Integer.parseInt(Integer.toBinaryString(number));
 	}
 
-	public static String dec2hex(int number) {
+	public static int dec2hex(int number) {
 
-		return Integer.toHexString(number).toUpperCase();
+		return Integer.parseInt(Integer.toHexString(number));
 	}
 
-	public static int hex2bin(String number) {
+	public static int hex2bin(int number) {
 
-		return dec2bin(Integer.parseInt(number, 16));
+		return dec2bin(Integer.parseInt(Integer.toString(number), 16));
 	}
 
-	public static int hex2dec(String number) {
+	public static int hex2dec(int number) {
 
-		return Integer.parseInt(number, 16);
+		return Integer.parseInt(Integer.toString(number), 16);
 	}
 
 	public static int[] int2array(int number) {
@@ -42,18 +42,4 @@ public class Conversoes {
 		}
 		return newGuess;
 	}
-	
-	public static String bin(int[] array){
-		
-		String number = "";
-		
-		for (int i : array) {
-			number = number + i;
-		}
-		
-		return number;
-		
-	}
-	
-	
 }
