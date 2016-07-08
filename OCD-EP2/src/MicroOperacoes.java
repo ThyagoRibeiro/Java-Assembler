@@ -18,15 +18,15 @@ public class MicroOperacoes {
 			break;
 
 		case "MOV":
-			if (p1.getNome().contains("[")) {
+			/*if (p1.getIndice().contains("[")) {
 					//tipo1
-			} else if (p2.getNome().contains("[")) {
+			} else if (p2.getIndice().contains("[")) {
 					//tipo2
 			} else {
 					//tipo3
-				texto = "t1: " + p1.getNome() + " <-- " + p2.getNome() + " ( " + p1.getEntrada() + " , "
+				texto = "t1: " + p1.getIndice() + " <-- " + p2.getIndice() + " ( " + p1.getEntrada() + " , "
 						+ p2.getEntrada() + ")" + "\n";
-			}
+			}*/
 			break;
 
 		case "SUB":
@@ -51,13 +51,14 @@ public class MicroOperacoes {
 
 	public static void Indirecao() {
 		//tipo 1
-		if (p1.getNome().contains("["))
+		/*if (p1.getIndice().contains("["))
 			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p1) <-- MBR (16, 5)";
 		//tipo 2
-		if (p2.getNome().contains("["))
+		if (p2.getIndice().contains("["))
 			texto = "t1: MAR <-- IR(p2) (3 , 13) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p2) <-- MBR (14, 5)";
+					*/
 	}
 
 	public MicroOperacoes(String op, Registrador p1, Registrador p2, boolean ind) {

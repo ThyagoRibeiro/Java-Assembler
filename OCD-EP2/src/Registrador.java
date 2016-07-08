@@ -3,21 +3,21 @@ public class Registrador {
 
 	private int entrada;
 	private int entrada2;
-	private String nome;
+	private int indice;
 	private int saida;
 	private int saida2;
 	private int[] dados;
 	
-	public Registrador(String nome, int entrada, int saida) {
-		this.nome = nome;
+	public Registrador(int indice, int entrada, int saida) {
+		this.indice = indice;
 		this.entrada = entrada;
 		this.saida = saida;
 		this.dados = new int [32];
 		
 	}
 	
-	public Registrador(String nome, int entrada, int saida, int entrada2, int saida2) {
-		this.nome = nome;
+	public Registrador(int indice, int entrada, int saida, int entrada2, int saida2) {
+		this.indice = indice;
 		this.entrada = entrada;
 		this.entrada2 = entrada2;
 		this.saida = saida;
@@ -30,8 +30,8 @@ public class Registrador {
 		return entrada;
 	}
 
-	public String getNome() {
-		return nome;
+	public int getIndice() {
+		return indice;
 	}
 
 	public int getSaida() {

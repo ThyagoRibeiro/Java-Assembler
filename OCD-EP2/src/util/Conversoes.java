@@ -3,18 +3,17 @@ package util;
 public class Conversoes {
 
 	public static int bin2dec(String number) {
-
-		return Integer.parseInt(number, 2);
+		return (int) Long.parseLong(number, 2);
 	}
 
 	public static String bin2hex(String number) {
 
-		return dec2hex(Integer.parseInt(number, 2)).toUpperCase();
+		return Long.toHexString(Long.parseLong(number,2)).toUpperCase();
 	}
 
-	public static int dec2bin(int number) {
+	public static String dec2bin(int number) {
 
-		return Integer.parseInt(Integer.toBinaryString(number));
+		return Integer.toBinaryString(number);
 	}
 
 	public static String dec2hex(int number) {
@@ -22,9 +21,9 @@ public class Conversoes {
 		return Integer.toHexString(number).toUpperCase();
 	}
 
-	public static int hex2bin(String number) {
+	public static String hex2bin(String number) {
 
-		return dec2bin(Integer.parseInt(number, 16));
+		return Long.toBinaryString(Long.parseLong(number,16));
 	}
 
 	public static int hex2dec(String number) {
@@ -55,5 +54,26 @@ public class Conversoes {
 		
 	}
 	
+	public static String array2String(int[] array){
+		  
+		  String number = "";
+		  
+		  for (int i : array) {
+		   number = number + i;
+		  }
+		  
+		  return number;
+		  
+	}
 	
+	public static int[] string2IntArray(String number){
+		  
+		  int[] array = new int[number.length()];
+		  
+		  for (int i = 0; i < array.length; i++) {
+		   array[i] = number.charAt(i) - 48;
+		  }
+		  
+		  return array;
+	}
 }

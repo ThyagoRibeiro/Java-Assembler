@@ -5,11 +5,11 @@ public class Memoria {
 	private int endereco;
 	private HashMap<Integer, boolean[]> memoriaAtual = new HashMap<>();
 
-	public void adicionarCelula(boolean[] palavra) {
+	public void adicionarLinha(boolean[] palavra) {
 		memoriaAtual.put(endereco, palavra);
 	}
 
-	public void atualizarCelula(int endereco, boolean[] palavra) {
+	public void atualizarLinha(int endereco, boolean[] palavra) {
 		memoriaAtual.put(endereco, palavra);
 	}
 
