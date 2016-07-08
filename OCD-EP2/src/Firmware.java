@@ -128,8 +128,8 @@ public class Firmware {
 			//atualiza interface
 			atualiza(registradores[4]);
 			
-			p1_dec = Conversoes.bin2dec(Conversoes.bin(registradores[4].getDados()));
-			p2_dec = Conversoes.bin2dec(Conversoes.bin(registradores[8].getDados()));
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec += p2_dec;
 			
 			//atualiza registrador
@@ -150,8 +150,8 @@ public class Firmware {
 			//atualiza interface
 			atualiza(registradores[4]);
 			
-			p1_dec = Conversoes.bin2dec(Conversoes.bin(registradores[7].getDados()));
-			p2_dec = Conversoes.bin2dec(Conversoes.bin(registradores[4].getDados()));
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec += p2_dec;
 			
 			//atualiza registrador
@@ -188,8 +188,8 @@ public class Firmware {
 			//atualiza interface
 			atualiza(registradores[4]);
 			
-			p1_dec = Conversoes.bin2dec(Conversoes.bin(registradores[4].getDados()));
-			p2_dec = Conversoes.bin2dec(Conversoes.bin(registradores[8].getDados()));
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec -= p2_dec;
 			
 			if(p1_dec < 0){
@@ -215,8 +215,8 @@ public class Firmware {
 			//atualiza interface
 			atualiza(registradores[4]);
 			
-			p1_dec = Conversoes.bin2dec(Conversoes.bin(registradores[7].getDados()));
-			p2_dec = Conversoes.bin2dec(Conversoes.bin(registradores[4].getDados()));
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec -= p2_dec;
 			
 			if(p1_dec < 0){
