@@ -38,9 +38,13 @@ public class Firmware {
 		Registrador p1 = new Registrador(BX, 6, 7);
 		Registrador p2 = new Registrador(AX, 8, 9);
 
-		p1.setDados(Conversoes.string2IntArray((Conversoes.dec2bin(20))));
+		p1.setDados(Conversoes.string2IntArray((Conversoes.dec2bin(10))));
 		p2.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(15)));
-		SUB(p1, p2, 3);
+		registradores[AX].setDados(new int[] { 1, 0, 1 });
+		
+		//ADD(p1,p2,3);
+		//SUB(p1, p2, 3);
+		MUL(p1, 2);
 
 	}
 
@@ -54,7 +58,34 @@ public class Firmware {
 		if (p1.getIndice() == DX)
 			ep2ocd.setLblDx(p1.getDados());
 		if (p1.getIndice() == MBR)
-			ep2ocd.setLblMbrValue(Conversoes.array2String((p1.getDados())));
+			ep2ocd.setLblMbrValue(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+		if (p1.getIndice() == MAR)
+			ep2ocd.setLblMarValue(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+		if (p1.getIndice() == PC)
+			ep2ocd.setLblPcValue(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+		if (p1.getIndice() == OP)
+			ep2ocd.setLblIrOpcodeValue(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+		if (p1.getIndice() == P1)
+			ep2ocd.setLblIrP1Value(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+		if (p1.getIndice() == P2)
+			ep2ocd.setLblIrP2Value(Integer.toString(Conversoes.bin2dec(Conversoes.array2String((p1.getDados())))));
+	}
+
+	public void verificaFlag(int number) {
+		if (number < 0) {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "-");
+		} else if (number > 0) {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "+");
+		} else {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, " ");
+			ep2ocd.setFlagTableValue(FlagTypeENUM.Z.column, "0");
+		}
+
+		if (number % 2 == 0) {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.P.column, "1");
+		} else {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.P.column, "0");
+		}
 	}
 
 	public void MOV(Registrador p1, Registrador p2, int tipo) {
@@ -141,6 +172,8 @@ public class Firmware {
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec += p2_dec;
 
+			verificaFlag(p1_dec);
+
 			// atualiza registrador
 			registradores[4].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 			// atualiza interface
@@ -163,6 +196,8 @@ public class Firmware {
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec += p2_dec;
 
+			verificaFlag(p1_dec);
+
 			// atualiza registrador
 			registradores[7].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 			// atualiza interface
@@ -174,6 +209,8 @@ public class Firmware {
 			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec += p2_dec;
+
+			verificaFlag(p1_dec);
 
 			// atualiza registrador
 			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
@@ -202,9 +239,7 @@ public class Firmware {
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec -= p2_dec;
 
-			if (p1_dec < 0) {
-				ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "-");
-			}
+			verificaFlag(p1_dec);
 
 			// atualiza registrador
 			registradores[4].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
@@ -229,9 +264,7 @@ public class Firmware {
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec -= p2_dec;
 
-			if (p1_dec < 0) {
-				ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "-");
-			}
+			verificaFlag(p1_dec);
 
 			// atualiza registrador
 			registradores[7].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
@@ -244,15 +277,57 @@ public class Firmware {
 			p2_dec = Conversoes.bin2dec(Conversoes.bin(p2.getDados()));
 			p1_dec -= p2_dec;
 
-			if (p1_dec < 0) {
-				ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "-");
-			}
+			verificaFlag(p1_dec);
 
 			// atualiza registrador
 			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 			// atualiza interface
 			atualiza(p1);
 			atualiza(p2);
+		}
+	}
+
+	public void MUL(Registrador p1, int tipo) {
+		int ax, p1_dec;
+		ax = Conversoes.bin2dec(Conversoes.bin(registradores[AX].getDados()));
+
+		switch (tipo) {
+		case 1:
+			// MAR <-- IR(P1)
+			registradores[5].setDados(registradores[7].getDados());
+			// atualiza interface
+			atualiza(registradores[5]);
+			// MBR<--(memória)
+			// registradores[4].setDados(memória);
+			// atualiza interface
+			atualiza(registradores[4]);
+
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			ax *= p1_dec;
+
+			verificaFlag(ax);
+
+			// atualiza registrador
+			registradores[AX].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(ax)));
+			// atualiza interface
+			atualiza(p1);
+			atualiza(registradores[AX]);
+			break;
+			
+		case 2:
+
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			ax *= p1_dec;
+
+			verificaFlag(ax);
+
+			// atualiza registrador
+			registradores[AX].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(ax)));
+
+			// atualiza interface
+			atualiza(p1);
+			atualiza(registradores[AX]);
+			break;
 		}
 	}
 
