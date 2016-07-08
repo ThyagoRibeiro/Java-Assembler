@@ -22,65 +22,68 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 
+import util.Conversoes;
+
 @SuppressWarnings("serial")
 public class EP2OCD extends javax.swing.JFrame {
 
 	// Declarando componentes
-	int index;
-	String[] flagsHeader;
-	String[][] flags;
-	JButton btnExec;
-	JButton btnNext;
-	JPanel jPanel1;
-	JPanel jPanel2;
-	JPanel jPanel5;
-	JPanel jPanel6;
-	JScrollPane jScrollPane1;
-	JScrollPane jScrollPane2;
-	JScrollPane jScrollPane3;
-	JScrollPane jScrollPane4;
-	JLabel lblAx;
-	JLabel lblAxBin;
-	JLabel lblAxDec;
-	JLabel lblAxHex;
-	JLabel lblBin;
-	JLabel lblBx;
-	JLabel lblBxBin;
-	JLabel lblBxDec;
-	JLabel lblBxHex;
-	JLabel lblCx;
-	JLabel lblCxBin;
-	JLabel lblCxDec;
-	JLabel lblCxHex;
-	JLabel lblDec;
-	JLabel lblDiagramImage;
-	JLabel lblDx;
-	JLabel lblDxBin;
-	JLabel lblDxDec;
-	JLabel lblDxHex;
-	JLabel lblFlags;
-	JLabel lblHex;
-	JLabel lblIr;
-	JLabel lblIrOpcode;
-	JLabel lblIrOpcodeValue;
-	JLabel lblIrP1;
-	JLabel lblIrP1Value;
-	JLabel lblIrP2;
-	JLabel lblIrP2Value;
-	JLabel lblMar;
-	JLabel lblMarValue;
-	JLabel lblMbr;
-	JLabel lblMbrValue;
-	JLabel lblPc;
-	JLabel lblPcValue;
-	JLabel lblRegisters;
-	JPanel panelButtons;
-	JPanel panelRegisters;
-	JTabbedPane tabbedPanel;
-	JTable tableFlags;
-	JTable tableMemory;
-	JTextPane textPanelCode;
-	JTextArea textAreaMicroOperations;
+	private int index;
+	private String[] flagsHeader;
+	private String[][] flags;
+	private JButton btnExec;
+	private JButton btnNext;
+	private JPanel jPanel1;
+	private JPanel jPanel2;
+	private JPanel jPanel5;
+	private JPanel jPanel6;
+	private JScrollPane jScrollPane1;
+	private JScrollPane jScrollPane2;
+	private JScrollPane jScrollPane3;
+	private JScrollPane jScrollPane4;
+	private JLabel lblAx;
+	private JLabel lblAxBin;
+	private JLabel lblAxDec;
+	private JLabel lblAxHex;
+	private JLabel lblBin;
+	private JLabel lblBx;
+	private JLabel lblBxBin;
+	private JLabel lblBxDec;
+	private JLabel lblBxHex;
+	private JLabel lblCx;
+	private JLabel lblCxBin;
+	private JLabel lblCxDec;
+	private JLabel lblCxHex;
+	private JLabel lblDec;
+	private JLabel lblDiagramImage;
+	private JLabel lblDx;
+	private JLabel lblDxBin;
+	private JLabel lblDxDec;
+	private JLabel lblDxHex;
+	private JLabel lblFlags;
+	private JLabel lblHex;
+	private JLabel lblIr;
+	private JLabel lblIrOpcode;
+	private JLabel lblIrOpcodeValue;
+	private JLabel lblIrP1;
+	private JLabel lblIrP1Value;
+	private JLabel lblIrP2;
+	private JLabel lblIrP2Value;
+	private JLabel lblMar;
+	private JLabel lblMarValue;
+	private JLabel lblMbr;
+	private JLabel lblMbrValue;
+	private JLabel lblPc;
+	private JLabel lblPcValue;
+	private JLabel lblRegisters;
+	private JPanel panelButtons;
+	private JPanel panelRegisters;
+	private JTabbedPane tabbedPanel;
+	private JTable tableFlags;
+	private JTable tableMemory;
+	private JTextPane textPanelCode;
+	private JTextArea textAreaMicroOperations;
+	public Memoria memoria;
 
 	public static void main(String[] args) {
 		try {
@@ -111,6 +114,7 @@ public class EP2OCD extends javax.swing.JFrame {
 	public EP2OCD() {
 
 		iniciarComponentes();
+		setLblAx(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, });
 
 	}
 
@@ -181,6 +185,7 @@ public class EP2OCD extends javax.swing.JFrame {
 		jPanel6 = new JPanel();
 		jScrollPane3 = new JScrollPane();
 		tableMemory = new JTable();
+		memoria = new Memoria();
 
 		// Configuracoes da janela
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -548,56 +553,32 @@ public class EP2OCD extends javax.swing.JFrame {
 		addTableModel();
 	}
 
-	public void setLblAxBin(String text) {
+	public void setLblAx(int[] bin) {
+		String text = Conversoes.bin(bin);
 		this.lblAxBin.setText(text);
+		this.lblAxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
+		this.lblAxHex.setText(Conversoes.bin2hex(text));
 	}
 
-	public void setLblAxDec(String text) {
-		this.lblAxDec.setText(text);
-	}
-
-	public void setLblAxHex(String text) {
-		this.lblAxHex.setText(text);
-	}
-
-	public void setLblBin(String text) {
-		this.lblBin.setText(text);
-	}
-
-	public void setLblBxBin(String text) {
+	public void setLblBx(int[] bin) {
+		String text = Conversoes.bin(bin);
 		this.lblBxBin.setText(text);
+		this.lblBxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
+		this.lblBxHex.setText(Conversoes.bin2hex(text));
 	}
 
-	public void setLblBxDec(String text) {
-		this.lblBxDec.setText(text);
-	}
-
-	public void setLblBxHex(String text) {
-		this.lblBxHex.setText(text);
-	}
-
-	public void setLblCxBin(String text) {
+	public void setLblCx(int[] bin) {
+		String text = Conversoes.bin(bin);
 		this.lblCxBin.setText(text);
+		this.lblCxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
+		this.lblCxHex.setText(Conversoes.bin2hex(text));
 	}
 
-	public void setLblCxDec(String text) {
-		this.lblCxDec.setText(text);
-	}
-
-	public void setLblCxHex(String text) {
-		this.lblCxHex.setText(text);
-	}
-
-	public void setLblDxBin(String text) {
+	public void setLblDx(int[] bin) {
+		String text = Conversoes.bin(bin);
 		this.lblDxBin.setText(text);
-	}
-
-	public void setLblDxDec(String text) {
-		this.lblDxDec.setText(text);
-	}
-
-	public void setLblDxHex(String text) {
-		this.lblDxHex.setText(text);
+		this.lblDxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
+		this.lblDxHex.setText(Conversoes.bin2hex(text));
 	}
 
 	public void setLblIrOpcodeValue(String text) {
@@ -628,8 +609,6 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		System.out.println("exec");
 
-		String temp;
-
 		for (String strings : textPanelCode.getText().split("\n")) {
 			System.out.println(strings);
 		}
@@ -646,25 +625,27 @@ public class EP2OCD extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 
-		text[index] = "<div style=\"background-color:red\">".concat(text[index]).concat("</div>");
+		try {
+			text[index] = "<div style=\"background-color:red\">".concat(text[index]).concat("</div>");
+			index++;
 
-		for (String string : text) {
-//			System.out.println("1o " + !string.equals(""));
-			if (!string.equals("")) {
-				System.out.println("2o " + string.contains("div"));
-				if (string.contains("div"))
-					temp = temp + string;
-				else
-					temp = temp + "<p style=\"margin-top: 0\">" + string + "</p>";
-				textPanelCode.setText(temp);
+			for (String string : text) {
+				 System.out.println("1o " + !string.equals(""));
+				if (!string.equals("")) {
+					System.out.println("2o " + string.contains("div"));
+					if (string.contains("div"))
+						temp = temp + string;
+					else
+						temp = temp + "<p style=\"margin-top: 0\">" + string + "</p>";
+					textPanelCode.setText(temp);
 
+				}
 			}
 
+			System.out.println("--");
+		} catch (Exception e) {
+			// e.printStackTrace();
 		}
-
-		System.out.println("--");
-
-		index++;
 
 	}
 
