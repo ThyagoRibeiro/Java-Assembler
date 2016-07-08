@@ -124,7 +124,46 @@ public class Firmware {
 	}
 
 	public void Busca() {
-		// IMPLEMENTAR
+		// MAR <-- PC
+		registradores[MAR].setDados(registradores[PC].getDados());
+		//Atualiza interface
+		atualiza(registradores[PC]);
+		atualiza(registradores[MAR]);
+		//MBR <-- MEMORIA
+		String pc = Conversoes.bin(registradores[PC].getDados());
+		int endereco = Conversoes.bin2dec(pc);
+		registradores[MBR].setDados(ep2ocd.memoria.getPalavra(endereco));
+		//Atualiza interface
+		atualiza(registradores[MBR]);
+		//incrementa PC
+		endereco++;
+		registradores[PC].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(endereco)));
+		//Atualiza interface
+		atualiza(registradores[PC]);
+		//IR <-- MBR
+		int [] IR = new int[16];
+		int [] OP_array = new int[16];
+		int [] P1_array = new int[16];
+		int [] P2_array = new int[16];
+		IR = registradores[MBR].getDados();
+		for(int i = 0; i<3;i++){
+			OP_array[i]=IR[i];
+		}
+		int g = 0;
+		for(int i = 4; i<9;i++){
+			P1_array[g]=IR[i];
+		}
+		int h = 0;
+		for(int i = 10; i<IR.length ;i++){
+			P2_array[h]=IR[i];
+		}
+		registradores[OP].setDados(OP_array);
+		registradores[P1].setDados(P1_array);
+		registradores[P2].setDados(P2_array);
+		//Atualiza interface
+		atualiza(registradores[OP]);
+		atualiza(registradores[P1]);
+		atualiza(registradores[P2]);
 	}
 
 	public void Indirecao(int tipo) {

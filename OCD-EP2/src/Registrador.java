@@ -22,7 +22,7 @@ public class Registrador {
 		this.entrada2 = entrada2;
 		this.saida = saida;
 		this.saida2 = saida2;
-		this.dados = new int [32];
+		this.dados = new int [16];
 		
 	}
 
