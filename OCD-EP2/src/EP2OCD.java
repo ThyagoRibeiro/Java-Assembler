@@ -83,7 +83,8 @@ public class EP2OCD extends javax.swing.JFrame {
 	private JTable tableMemory;
 	private JTextPane textPanelCode;
 	private JTextArea textAreaMicroOperations;
-	
+	public Memoria memoria;
+	private Firmware firmware;
 
 	public static void main(String[] args) {
 		try {
@@ -114,8 +115,8 @@ public class EP2OCD extends javax.swing.JFrame {
 	public EP2OCD() {
 
 		iniciarComponentes();
-		setLblAx(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, });
-
+		memoria = new Memoria();
+		firmware = new Firmware(this);
 	}
 
 	private void addTableModel() {
@@ -185,7 +186,6 @@ public class EP2OCD extends javax.swing.JFrame {
 		jPanel6 = new JPanel();
 		jScrollPane3 = new JScrollPane();
 		tableMemory = new JTable();
-		
 
 		// Configuracoes da janela
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -630,7 +630,7 @@ public class EP2OCD extends javax.swing.JFrame {
 			index++;
 
 			for (String string : text) {
-				 System.out.println("1o " + !string.equals(""));
+				System.out.println("1o " + !string.equals(""));
 				if (!string.equals("")) {
 					System.out.println("2o " + string.contains("div"));
 					if (string.contains("div"))
