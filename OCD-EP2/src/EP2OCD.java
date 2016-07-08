@@ -83,7 +83,7 @@ public class EP2OCD extends javax.swing.JFrame {
 	private JTable tableMemory;
 	private JTextPane textPanelCode;
 	private JTextArea textAreaMicroOperations;
-	public Memoria memoria;
+	
 
 	public static void main(String[] args) {
 		try {
@@ -114,7 +114,7 @@ public class EP2OCD extends javax.swing.JFrame {
 	public EP2OCD() {
 
 		iniciarComponentes();
-		setLblAx(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, });
+		setLblAx(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, });
 
 	}
 
@@ -185,7 +185,7 @@ public class EP2OCD extends javax.swing.JFrame {
 		jPanel6 = new JPanel();
 		jScrollPane3 = new JScrollPane();
 		tableMemory = new JTable();
-		memoria = new Memoria();
+		
 
 		// Configuracoes da janela
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

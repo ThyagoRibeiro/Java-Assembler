@@ -50,10 +50,11 @@ public class MicroOperacoes {
 	}
 
 	public static void Indirecao() {
+		//tipo 1
 		if (p1.getNome().contains("["))
 			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p1) <-- MBR (16, 5)";
-
+		//tipo 2
 		if (p2.getNome().contains("["))
 			texto = "t1: MAR <-- IR(p2) (3 , 13) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p2) <-- MBR (14, 5)";
