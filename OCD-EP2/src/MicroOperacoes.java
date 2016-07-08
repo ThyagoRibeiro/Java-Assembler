@@ -5,7 +5,7 @@ public class MicroOperacoes {
 	private static Registrador p1;
 	private static Registrador p2;
 	private static String texto;
-
+	private static int tipo;
 	public static void Busca() {
 		texto = "t1: MAR <-- PC (3 , 2) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n" + "t3: ULA <-- PC (2 , 18) \n"
 				+ "AC <-- ULA (Incremento) \n" + "PC <-- AC (1 , 19) \n" + "t4: IR <-- MBR (12 , 5)";
@@ -19,10 +19,11 @@ public class MicroOperacoes {
 
 		case "MOV":
 			if (p1.getNome().contains("[")) {
-
+					//tipo1
 			} else if (p2.getNome().contains("[")) {
-
+					//tipo2
 			} else {
+					//tipo3
 				texto = "t1: " + p1.getNome() + " <-- " + p2.getNome() + " ( " + p1.getEntrada() + " , "
 						+ p2.getEntrada() + ")" + "\n";
 			}
