@@ -67,7 +67,7 @@ public class Conversoes {
 	}
 
 	public static int[] string2IntArray(String number) {
-
+		
 		int[] array = new int[number.length()];
 
 		for (int i = 0; i < array.length; i++) {
