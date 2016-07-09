@@ -12,7 +12,7 @@ public class Registrador {
 		this.indice = indice;
 		this.entrada = entrada;
 		this.saida = saida;
-		this.dados = new int [32];
+		this.dados = new int [16];
 		
 	}
 	
