@@ -9,6 +9,7 @@
  * @author Thyago Ribeiro
  */
 
+import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +31,7 @@ public class EP2OCD extends javax.swing.JFrame {
 	// Declarando componentes
 	private int index;
 	private String[] flagsHeader;
+	private String[] memoryHeader;
 	private String[][] flags;
 	private JButton btnExec;
 	private JButton btnNext;
@@ -85,6 +87,8 @@ public class EP2OCD extends javax.swing.JFrame {
 	private JTextArea textAreaMicroOperations;
 	public Memoria memoria;
 	private Firmware firmware;
+	private boolean running;
+	String[] code;
 
 	public static void main(String[] args) {
 		try {
@@ -119,7 +123,7 @@ public class EP2OCD extends javax.swing.JFrame {
 		firmware = new Firmware(this);
 	}
 
-	private void addTableModel() {
+	private void updateTableFlags() {
 
 		tableFlags.setModel(new DefaultTableModel(flags, flagsHeader) {
 			boolean[] canEdit = new boolean[] { false, false };
@@ -128,6 +132,63 @@ public class EP2OCD extends javax.swing.JFrame {
 				return canEdit[columnIndex];
 			}
 		});
+
+		if (tableFlags.getColumnModel().getColumnCount() > 0) {
+			tableFlags.getColumnModel().getColumn(0).setResizable(false);
+			tableFlags.getColumnModel().getColumn(1).setResizable(false);
+			tableFlags.getColumnModel().getColumn(2).setResizable(false);
+			tableFlags.getColumnModel().getColumn(3).setResizable(false);
+			tableFlags.getColumnModel().getColumn(4).setResizable(false);
+			tableFlags.getColumnModel().getColumn(5).setResizable(false);
+			tableFlags.getColumnModel().getColumn(6).setResizable(false);
+			tableFlags.getColumnModel().getColumn(7).setResizable(false);
+			tableFlags.getColumnModel().getColumn(8).setResizable(false);
+		}
+
+		tableFlags.setBackground(Color.WHITE);
+		tableFlags.setGridColor(Color.BLACK);
+
+	}
+
+	private void updateTableMemory() {
+
+		String[][] memoryContent;
+
+//		memoryContent = new String[200][2];
+
+		
+		if (memoria.getSize() >= 30) {
+			memoryContent = new String[memoria.getSize()][2];
+		} else {
+			memoryContent = new String[30][2];
+		}
+		
+		for (int i = 0; i < memoria.getSize(); i++) {
+			memoryContent[i][0] = Integer.toString(i);
+			memoryContent[i][1] = memoria.getPalavra(i);
+		}
+
+		for (int i = memoria.getSize(); i < 30; i++) {
+			memoryContent[i][0] = memoryContent[i][1] = "";
+		}
+
+		tableMemory.setModel(new DefaultTableModel(memoryContent, memoryHeader) {
+			boolean[] canEdit = new boolean[] { false, false };
+
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
+				return canEdit[columnIndex];
+			}
+
+		});
+		tableMemory.setPreferredSize(new java.awt.Dimension(90, 480));
+		tableMemory.getTableHeader().setReorderingAllowed(false);
+		jScrollPane3.setViewportView(tableMemory);
+		if (tableMemory.getColumnModel().getColumnCount() > 0) {
+			tableMemory.getColumnModel().getColumn(0).setPreferredWidth(5);
+		}
+
+		tableMemory.setBackground(Color.WHITE);
+		tableMemory.setGridColor(Color.BLACK);
 	}
 
 	private void iniciarComponentes() {
@@ -254,27 +315,32 @@ public class EP2OCD extends javax.swing.JFrame {
 		panelRegisters.setPreferredSize(new java.awt.Dimension(286, 200));
 
 		// Adicionando texto aos labels
-		lblDxHex.setText("0000");
 		lblAx.setText("ax");
 		lblBx.setText("bx");
 		lblCx.setText("cx");
 		lblDx.setText("dx");
+
 		lblHex.setText("Hex");
-		lblDec.setText("Dec");
-		lblBin.setText("Bin");
-		lblBxHex.setText("0000");
-		lblBxDec.setText("00000");
-		lblCxHex.setText("0000");
 		lblAxHex.setText("0000");
-		lblAxDec.setText("00000");
-		lblCxDec.setText("00000");
+		lblBxHex.setText("0000");
+		lblCxHex.setText("0000");
+		lblDxHex.setText("0000");
+
+		lblDec.setText("Dec");
+		lblAxDec.setText(" 00000");
+		lblBxDec.setText(" 00000");
+		lblCxDec.setText(" 00000");
+		lblDxDec.setText(" 00000");
+
+		lblBin.setText("Bin");
 		lblAxBin.setText("0000000000000000");
-		lblDxDec.setText("00000");
-		lblRegisters.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-		lblRegisters.setText("Registradores");
 		lblBxBin.setText("0000000000000000");
 		lblCxBin.setText("0000000000000000");
 		lblDxBin.setText("0000000000000000");
+
+		lblRegisters.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+		lblRegisters.setText("Registradores");
+
 		lblMar.setText("MAR");
 		lblMbr.setText("MBR");
 		lblMbrValue.setText("0000");
@@ -285,9 +351,9 @@ public class EP2OCD extends javax.swing.JFrame {
 		lblIrOpcodeValue.setText("0000");
 		lblIrOpcode.setText("opcode");
 		lblIrP1.setText("p1");
-		lblIrP1Value.setText("0000");
+		lblIrP1Value.setText("000000");
 		lblIrP2.setText("p2");
-		lblIrP2Value.setText("0000");
+		lblIrP2Value.setText("000000");
 
 		// Organizando componentes de registradores
 		javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(panelRegisters);
@@ -301,64 +367,77 @@ public class EP2OCD extends javax.swing.JFrame {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addGap(64, 64, 64).addComponent(lblBin, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
+
+				// ax
 				.addGroup(
 						jPanel4Layout.createSequentialGroup().addGap(20, 20, 20).addComponent(lblAx).addGap(18, 18, 18)
 								.addComponent(lblAxHex, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addGap(65, 65, 65)
-						.addComponent(lblAxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+						.addComponent(lblAxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 								javax.swing.GroupLayout.PREFERRED_SIZE).addGap(64, 64, 64).addComponent(lblAxBin))
+
+				// bx
 				.addGroup(
 						jPanel4Layout.createSequentialGroup().addGap(20, 20, 20).addComponent(lblBx).addGap(18, 18, 18)
 								.addComponent(lblBxHex, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addGap(65, 65, 65)
-						.addComponent(lblBxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+						.addComponent(lblBxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 								javax.swing.GroupLayout.PREFERRED_SIZE).addGap(64, 64, 64).addComponent(lblBxBin))
+
+				// cx
 				.addGroup(
 						jPanel4Layout.createSequentialGroup().addGap(20, 20, 20).addComponent(lblCx).addGap(18, 18, 18)
-								.addComponent(lblCxHex, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+								.addComponent(lblCxHex, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addGap(65, 65, 65)
-						.addComponent(lblCxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+						.addComponent(lblCxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 								javax.swing.GroupLayout.PREFERRED_SIZE).addGap(64, 64, 64).addComponent(lblCxBin))
-				.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50).addComponent(lblIr))
-				.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50).addComponent(lblIrOpcode)
-						.addGap(65, 65, 65).addComponent(lblIrP1).addGap(84, 84, 84).addComponent(lblIrP2))
-				.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50).addComponent(lblIrOpcodeValue)
-						.addGap(76, 76, 76).addComponent(lblIrP1Value).addGap(72, 72, 72).addComponent(lblIrP2Value))
-				.addGroup(jPanel4Layout.createSequentialGroup().addGap(20, 20, 20)
-						.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-								.addComponent(lblMarValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGroup(jPanel4Layout.createSequentialGroup().addComponent(lblDx).addGap(18, 18, 18)
+
+				// dx
+				.addGroup(
+						jPanel4Layout.createSequentialGroup().addGap(20, 20, 20).addComponent(lblDx).addGap(18, 18, 18)
 								.addComponent(lblDxHex, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-										javax.swing.GroupLayout.PREFERRED_SIZE)))
-						.addGap(65, 65, 65)
-						.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(lblDxDec, javax.swing.GroupLayout.Alignment.TRAILING,
-										javax.swing.GroupLayout.PREFERRED_SIZE, 36,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblMbr, javax.swing.GroupLayout.Alignment.TRAILING,
-										javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+								.addGap(65, 65, 65)
+								.addComponent(lblDxDec, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblMbrValue, javax.swing.GroupLayout.Alignment.TRAILING,
-										javax.swing.GroupLayout.PREFERRED_SIZE, 36,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(
-										jPanel4Layout.createSequentialGroup().addGap(64, 64, 64).addComponent(lblDxBin))
+								.addGap(64, 64, 64).addComponent(lblDxBin))
+
+						.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50).addComponent(lblIr))
+						.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50).addComponent(lblIrOpcode)
+								.addGap(65, 65, 65).addComponent(lblIrP1).addGap(84, 84, 84).addComponent(lblIrP2))
+						.addGroup(jPanel4Layout.createSequentialGroup().addGap(50, 50, 50)
+								.addComponent(lblIrOpcodeValue).addGap(76, 76, 76).addComponent(lblIrP1Value)
+								.addGap(59, 59, 59).addComponent(lblIrP2Value))
+						.addGroup(jPanel4Layout.createSequentialGroup().addGap(20, 20, 20)
 								.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-										.addGroup(jPanel4Layout.createSequentialGroup()
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(lblPcValue, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGroup(javax.swing.GroupLayout.Alignment.LEADING,
-												jPanel4Layout.createSequentialGroup().addGap(60, 60, 60).addComponent(
-														lblPc, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-														javax.swing.GroupLayout.PREFERRED_SIZE))))));
+										.addComponent(lblMarValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(65, 65, 65).addComponent(lblMar, javax.swing.GroupLayout.PREFERRED_SIZE,
+												35, javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addGap(67, 67, 67)
+								.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+										.addComponent(lblMbr, javax.swing.GroupLayout.Alignment.TRAILING,
+												javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblMbrValue, javax.swing.GroupLayout.Alignment.TRAILING,
+												javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+												javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+										.addGroup(jPanel4Layout
+												.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+												.addGroup(jPanel4Layout.createSequentialGroup().addPreferredGap(
+														javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+														.addComponent(lblPcValue,
+																javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+												.addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+														jPanel4Layout.createSequentialGroup().addGap(64, 64, 64)
+																.addComponent(lblPc,
+																		javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+																		javax.swing.GroupLayout.PREFERRED_SIZE))))));
 		jPanel4Layout.setVerticalGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel4Layout.createSequentialGroup().addGap(11, 11, 11).addComponent(lblRegisters)
 						.addGap(17, 17, 17)
@@ -402,9 +481,11 @@ public class EP2OCD extends javax.swing.JFrame {
 		flags = new String[][] { { "", "", "", "", "", "", "", "", "" } };
 		flagsHeader = new String[] { "O", "D", "I", "T", "S", "Z", "A", "P", "C" };
 		tableFlags.setBackground(new java.awt.Color(204, 204, 204));
-		addTableModel();
+		updateTableFlags();
 		tableFlags.setEnabled(false);
+
 		jScrollPane2.setViewportView(tableFlags);
+		tableFlags.getTableHeader().setReorderingAllowed(false);
 
 		// Organizando componentes de flags
 		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -484,27 +565,8 @@ public class EP2OCD extends javax.swing.JFrame {
 		tabbedPanel.addTab("Micro-operações", jPanel5);
 
 		// Iniciando tabela da memoria
-		tableMemory
-				.setModel(new javax.swing.table.DefaultTableModel(
-						new Object[][] { { null, null }, { null, null }, { null, null }, { null, null }, { null, null },
-								{ null, null }, { null, null }, { null, null }, { null, null }, { null, null },
-								{ null, null }, { null, null }, { null, null }, { null, null }, { null, null },
-								{ null, null }, { null, null }, { null, null }, { null, null }, { null, null },
-								{ null, null }, { null, null }, { null, null }, { null, null }, { null, null },
-								{ null, null }, { null, null }, { null, null }, { null, null }, { null, null } },
-						new String[] { "Endereço", "Palavrra" }) {
-					boolean[] canEdit = new boolean[] { false, false };
-
-					public boolean isCellEditable(int rowIndex, int columnIndex) {
-						return canEdit[columnIndex];
-					}
-				});
-		tableMemory.setPreferredSize(new java.awt.Dimension(90, 480));
-		tableMemory.getTableHeader().setReorderingAllowed(false);
-		jScrollPane3.setViewportView(tableMemory);
-		if (tableMemory.getColumnModel().getColumnCount() > 0) {
-			tableMemory.getColumnModel().getColumn(0).setPreferredWidth(5);
-		}
+		memoryHeader = new String[] { "Endereço", "Palavrra" };
+		updateTableFlags();
 
 		javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
 		jPanel6.setLayout(jPanel6Layout);
@@ -550,35 +612,35 @@ public class EP2OCD extends javax.swing.JFrame {
 	public void setFlagTableValue(int column, String text) {
 
 		flags[0][column] = text;
-		addTableModel();
+		updateTableFlags();
 	}
 
 	public void setLblAx(int[] bin) {
 		String text = Conversoes.bin(bin);
-		this.lblAxBin.setText(text);
-		this.lblAxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
-		this.lblAxHex.setText(Conversoes.bin2hex(text));
+		this.lblAxBin.setText(Conversoes.addZeros(text, 2));
+		this.lblAxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
+		this.lblAxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblBx(int[] bin) {
 		String text = Conversoes.bin(bin);
-		this.lblBxBin.setText(text);
-		this.lblBxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
-		this.lblBxHex.setText(Conversoes.bin2hex(text));
+		this.lblBxBin.setText(Conversoes.addZeros(text, 2));
+		this.lblBxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
+		this.lblBxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblCx(int[] bin) {
 		String text = Conversoes.bin(bin);
-		this.lblCxBin.setText(text);
-		this.lblCxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
-		this.lblCxHex.setText(Conversoes.bin2hex(text));
+		this.lblCxBin.setText(Conversoes.addZeros(text, 2));
+		this.lblCxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
+		this.lblCxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblDx(int[] bin) {
 		String text = Conversoes.bin(bin);
-		this.lblDxBin.setText(text);
-		this.lblDxDec.setText(Integer.toString(Conversoes.bin2dec(text)));
-		this.lblDxHex.setText(Conversoes.bin2hex(text));
+		this.lblDxBin.setText(Conversoes.addZeros(text, 2));
+		this.lblDxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
+		this.lblDxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblIrOpcodeValue(String text) {
@@ -617,34 +679,47 @@ public class EP2OCD extends javax.swing.JFrame {
 
 	private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {
 
-		String[] text = null;
-		String temp = "";
 		try {
-			text = textPanelCode.getDocument().getText(0, textPanelCode.getDocument().getLength()).split("\n");
+			code = textPanelCode.getDocument().getText(1, textPanelCode.getDocument().getLength()).split("\n");
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 
-		try {
-			text[index] = "<div style=\"background-color:red\">".concat(text[index]).concat("</div>");
-			index++;
+		if (!running) {
 
-			for (String string : text) {
-				System.out.println("1o " + !string.equals(""));
-				if (!string.equals("")) {
-					System.out.println("2o " + string.contains("div"));
-					if (string.contains("div"))
-						temp = temp + string;
-					else
-						temp = temp + "<p style=\"margin-top: 0\">" + string + "</p>";
-					textPanelCode.setText(temp);
+			textPanelCode.setEnabled(false);
+			running = true;
+			index = 0;
 
-				}
+			memoria.limparMemoria();
+			
+			for (String line : code) {
+				memoria.adicionarLinha(line);
 			}
 
-			System.out.println("--");
-		} catch (Exception e) {
-			// e.printStackTrace();
+			updateTableMemory();
+		}
+
+		String newCode = "";
+
+		code[index] = "<div style=\"background-color:red\">".concat(code[index]).concat("</div>");
+
+		for (String line : code) {
+
+			if (!line.equals("")) {
+
+				if (line.contains("div"))
+					newCode = newCode + line;
+				else
+					newCode = newCode + "<p style=\"margin-top: 0\">" + line + "</p>";
+
+			}
+		}
+
+		textPanelCode.setText(newCode);
+		if (++index >= code.length) {
+			running = false;
+			textPanelCode.setEnabled(true);
 		}
 
 	}
