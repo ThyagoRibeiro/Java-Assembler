@@ -15,12 +15,12 @@ public class Memoria {
 		memoriaAtual.put(endereco, palavra);
 	}
 
-	public String getPalavra(int endereco) {
-		return memoriaAtual.get(endereco);
-	}
-
 	public int getSize(){
 		return memoriaAtual.size();
+	}
+	
+	public String getPalavra(int endereco) {
+		return memoriaAtual.get(endereco);
 	}
 	
 	public Set<Entry<Integer, String>> getEntrySet(){
