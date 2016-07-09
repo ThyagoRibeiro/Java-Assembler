@@ -203,7 +203,9 @@ public class Firmware {
 			// atualiza interface
 			atualiza(registradores[5]);
 			// MBR<--(memória)
-			// registradores[4].setDados(memória);
+			String mar = Conversoes.bin(registradores[MAR].getDados());
+			int endereco = Conversoes.bin2dec(mar);
+			registradores[MBR].setDados(ep2ocd.memoria.getPalavra(endereco));
 			// atualiza interface
 			atualiza(registradores[4]);
 
@@ -218,6 +220,9 @@ public class Firmware {
 			// atualiza interface
 			atualiza(registradores[4]);
 			// MEMORIA <-- MBR
+			//THYAGO DA UMA OLHADA AQUI
+			//A POSICAO DA MEMORIA PRA MIM ADICIONAR O MBR TEM Q SER A DEFINADA PELO MAR
+			ep2ocd.memoria.adicionarLinha(registradores[MBR].getDados());
 			// MEMORIA.setDados(registrador[4].getDados());
 
 			break;
