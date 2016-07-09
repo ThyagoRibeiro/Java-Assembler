@@ -35,16 +35,21 @@ public class Firmware {
 		// {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 		// registradores[AX] = registradores[BX];
 		// ep2ocd.setLbl();
-		Registrador p1 = new Registrador(BX, 6, 7);
-		Registrador p2 = new Registrador(AX, 8, 9);
+		Registrador p1 = new Registrador(AX, 6, 7);
+		Registrador p2 = new Registrador(BX, 8, 9);
 
-		p1.setDados(Conversoes.string2IntArray((Conversoes.dec2bin(10))));
+		p1.setDados(Conversoes.string2IntArray((Conversoes.dec2bin(45))));
 		p2.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(15)));
-		registradores[AX].setDados(new int[] { 1, 0, 1 });
-		
-		//ADD(p1,p2,3);
-		//SUB(p1, p2, 3);
-		MUL(p1, 2);
+		registradores[AX].setDados(p1.getDados());
+
+		atualiza(p1);
+		atualiza(p2);
+
+		// ADD(p1,p2,3);
+		// SUB(p1, p2, 3);
+		// MUL(p2, 2);
+		// INC(p1,2);
+		// DEC(p1,2);
 
 	}
 
@@ -118,7 +123,6 @@ public class Firmware {
 			p1.setDados(p2.getDados());
 			// atualiza interface
 			atualiza(p1);
-			atualiza(p2);
 			break;
 		}
 	}
@@ -126,41 +130,41 @@ public class Firmware {
 	public void Busca() {
 		// MAR <-- PC
 		registradores[MAR].setDados(registradores[PC].getDados());
-		//Atualiza interface
+		// Atualiza interface
 		atualiza(registradores[PC]);
 		atualiza(registradores[MAR]);
-		//MBR <-- MEMORIA
+		// MBR <-- MEMORIA
 		String pc = Conversoes.bin(registradores[PC].getDados());
 		int endereco = Conversoes.bin2dec(pc);
 		registradores[MBR].setDados(ep2ocd.memoria.getPalavra(endereco));
-		//Atualiza interface
+		// Atualiza interface
 		atualiza(registradores[MBR]);
-		//incrementa PC
+		// incrementa PC
 		endereco++;
 		registradores[PC].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(endereco)));
-		//Atualiza interface
+		// Atualiza interface
 		atualiza(registradores[PC]);
-		//IR <-- MBR
-		int [] IR = new int[16];
-		int [] OP_array = new int[16];
-		int [] P1_array = new int[16];
-		int [] P2_array = new int[16];
+		// IR <-- MBR
+		int[] IR = new int[16];
+		int[] OP_array = new int[16];
+		int[] P1_array = new int[16];
+		int[] P2_array = new int[16];
 		IR = registradores[MBR].getDados();
-		for(int i = 0; i<3;i++){
-			OP_array[i]=IR[i];
+		for (int i = 0; i < 3; i++) {
+			OP_array[i] = IR[i];
 		}
 		int g = 0;
-		for(int i = 4; i<9;i++){
-			P1_array[g]=IR[i];
+		for (int i = 4; i < 9; i++) {
+			P1_array[g] = IR[i];
 		}
 		int h = 0;
-		for(int i = 10; i<IR.length ;i++){
-			P2_array[h]=IR[i];
+		for (int i = 10; i < IR.length; i++) {
+			P2_array[h] = IR[i];
 		}
 		registradores[OP].setDados(OP_array);
 		registradores[P1].setDados(P1_array);
 		registradores[P2].setDados(P2_array);
-		//Atualiza interface
+		// Atualiza interface
 		atualiza(registradores[OP]);
 		atualiza(registradores[P1]);
 		atualiza(registradores[P2]);
@@ -220,8 +224,9 @@ public class Firmware {
 			// atualiza interface
 			atualiza(registradores[4]);
 			// MEMORIA <-- MBR
-			//THYAGO DA UMA OLHADA AQUI
-			//A POSICAO DA MEMORIA PRA MIM ADICIONAR O MBR TEM Q SER A DEFINADA PELO MAR
+			// THYAGO DA UMA OLHADA AQUI
+			// A POSICAO DA MEMORIA PRA MIM ADICIONAR O MBR TEM Q SER A DEFINADA
+			// PELO MAR
 			ep2ocd.memoria.adicionarLinha(registradores[MBR].getDados());
 			// MEMORIA.setDados(registrador[4].getDados());
 
@@ -260,7 +265,6 @@ public class Firmware {
 			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 			// atualiza interface
 			atualiza(p1);
-			atualiza(p2);
 			break;
 		}
 	}
@@ -327,7 +331,6 @@ public class Firmware {
 			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 			// atualiza interface
 			atualiza(p1);
-			atualiza(p2);
 		}
 	}
 
@@ -357,7 +360,7 @@ public class Firmware {
 			atualiza(p1);
 			atualiza(registradores[AX]);
 			break;
-			
+
 		case 2:
 
 			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
@@ -369,8 +372,87 @@ public class Firmware {
 			registradores[AX].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(ax)));
 
 			// atualiza interface
-			atualiza(p1);
 			atualiza(registradores[AX]);
+			break;
+		}
+	}
+
+	public void INC(Registrador p1, int tipo) {
+		int p1_dec;
+
+		switch (tipo) {
+		case 1:
+			// MAR <-- IR(P1)
+			registradores[5].setDados(registradores[7].getDados());
+			// atualiza interface
+			atualiza(registradores[5]);
+			// MBR<--(memória)
+			// registradores[4].setDados(memória);
+			// atualiza interface
+			atualiza(registradores[4]);
+
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p1_dec += 1;
+			
+			verificaFlag(p1_dec);
+
+			// atualiza registrador
+			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
+			// atualiza interface
+			atualiza(p1);
+			break;
+
+		case 2:
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p1_dec += 1;
+			
+			verificaFlag(p1_dec);
+
+			// atualiza registrador
+			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
+
+			// atualiza interface
+			atualiza(p1);
+			break;
+		}
+	}
+
+	public void DEC(Registrador p1, int tipo) {
+		int p1_dec;
+
+		switch (tipo) {
+		case 1:
+			// MAR <-- IR(P1)
+			registradores[5].setDados(registradores[7].getDados());
+			// atualiza interface
+			atualiza(registradores[5]);
+			// MBR<--(memória)
+			// registradores[4].setDados(memória);
+			// atualiza interface
+			atualiza(registradores[4]);
+
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p1_dec -= 1;
+			
+			verificaFlag(p1_dec);
+
+			// atualiza registrador
+			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
+			// atualiza interface
+			atualiza(p1);
+			break;
+
+		case 2:
+			p1_dec = Conversoes.bin2dec(Conversoes.bin(p1.getDados()));
+			p1_dec -= 1;
+			
+			verificaFlag(p1_dec);
+
+			// atualiza registrador
+			p1.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
+
+			// atualiza interface
+			atualiza(p1);
 			break;
 		}
 	}
