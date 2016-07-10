@@ -163,7 +163,7 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		for (int i = 0; i < memoria.getSize(); i++) {
 			memoryContent[i][0] = Integer.toString(i);
-			memoryContent[i][1] = memoria.getPalavra(i);
+			memoryContent[i][1] = memoria.getString(i);
 		}
 
 		for (int i = memoria.getSize(); i < 30; i++) {
@@ -687,7 +687,6 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		getCode();
 		runLine();
-		firmware.atualizaPc(8);
 		firmware.cicloInstrucao();
 
 	}
@@ -723,10 +722,10 @@ public class EP2OCD extends javax.swing.JFrame {
 				firmware.codigoParaPalavra(line);
 			}
 			firmware.enviarCodigoParaMemoria();
-			firmware.atualizaPc(index);
+			//firmware.atualizaPc(index);
 		}
 
-		firmware.cicloInstrucao();
+		//firmware.cicloInstrucao();
 		
 		String newCode = "";
 
@@ -761,7 +760,9 @@ public class EP2OCD extends javax.swing.JFrame {
 	}
 
 	public int adicionarLinha(String palavra) {
-		return memoria.adicionarLinha(palavra);
+		int mem = memoria.adicionarLinha(palavra);
+		updateTableMemory();
+		return mem;
 	}
 
 	public void atualizarLinha(int endereco, String palavra) {

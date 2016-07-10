@@ -11,9 +11,9 @@ public class Conversoes {
 		return Long.toHexString(Long.parseLong(number, 2)).toUpperCase();
 	}
 
-	public static String dec2bin(int number) {
+	public static String dec2bin(long number) {
 
-		return Integer.toBinaryString(number);
+		return Long.toBinaryString(number);
 	}
 
 	public static String dec2hex(int number) {
@@ -59,7 +59,7 @@ public class Conversoes {
 		String number = "{" + array[0];
 
 		for (int i = 1; i < array.length; i++) {
-			number = number + ", " + array[i];
+			number = number + separator + array[i];
 		}
 
 		number = number + "}";

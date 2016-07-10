@@ -25,8 +25,12 @@ public class Memoria {
 		return memoriaAtual.size();
 	}
 	
-	public String getPalavra(int endereco) {
+	public String getString(int endereco) {
 		return memoriaAtual.get(endereco);
+	}
+	
+	public String getPalavra(int endereco) {
+		return memoriaAtual.get(endereco).replace("{", "").replace("}", "").replace(", ", "");
 	}
 	
 	public Set<Entry<Integer, String>> getEntrySet(){
