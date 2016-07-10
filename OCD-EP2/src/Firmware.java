@@ -25,6 +25,7 @@ public class Firmware {
 			new Registrador(MBR, 4, 5, 22, 21), new Registrador(MAR, 3, 20), new Registrador(PC, 1, 2),
 			new Registrador(P1, 16, 15), new Registrador(P2, 14, 13), new Registrador(OP, 0, 0) };
 	private ArrayList<String> arrayPalavras = new ArrayList<>();
+	private int CMP;
 
 	public Firmware(EP2OCD ep2ocd) {
 		this.ep2ocd = ep2ocd;
@@ -546,8 +547,57 @@ public class Firmware {
 		}
 	}
 
-	public void CMP(Registrador p1, Registrador p2, int tipo) {
-
+	public void CMP(Registrador p1, Registrador p2, int tipo){
+		//P1 - P2
+		int p1_decimal = Conversoes.bin2dec(Conversoes.array2String(p1.getDados()));
+		int p2_decimal = Conversoes.bin2dec(Conversoes.array2String(p2.getDados()));
+		switch(tipo){
+		//memoria - registrador
+		case 1:
+			int compara = Integer.parseInt((ep2ocd.getPalavra(p1_decimal)));
+			CMP = compara - p2_decimal;
+			verificaFlag(CMP);
+			break;
+		//registrador - memoria	
+		case 2:
+			int compara2 = Integer.parseInt((ep2ocd.getPalavra(p2_decimal)));
+			CMP = p1_decimal - compara2;
+			verificaFlag(CMP);
+			break;
+		//registrador - registrador
+		case 3:
+			p1_decimal = Conversoes.bin2dec(Conversoes.array2String(p1.getDados()));
+			p2_decimal = Conversoes.bin2dec(Conversoes.array2String(p2.getDados()));
+			CMP = p1_decimal - p2_decimal;
+			verificaFlag(CMP);
+			break;
+		}
+		
+	}
+	
+	public void jnz(){
+		
+	}
+	public void jz(){
+		
+	}
+	public void jle(){
+		
+	}
+	public void jl(){
+		
+	}
+	public void jge(){
+		
+	}
+	public void jg(){
+		
+	}
+	public void jne(){
+		
+	}
+	public void je(){
+		
 	}
 
 	public void atualizaPc(int i) {
