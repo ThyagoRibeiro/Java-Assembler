@@ -1,13 +1,13 @@
 public class MicroOperacoes {
 	
-	private static String op;
+	private static int op;
 	private static Registrador p1;
 	private static Registrador p2;
 	private static String texto;
 	private static int tipo;
 	private static int indirecao; // 1 - Primeiro Parâmetro; 2- Segundo parâmetro; !1||2 Não tem
 	
-	public MicroOperacoes(String op, Registrador p1, Registrador p2, int ind) {
+	public MicroOperacoes(int op, Registrador p1, Registrador p2, int ind) {
 		this.op = op;
 		this.p1 = p1;
 		this.p2 = p2;
@@ -25,7 +25,7 @@ public class MicroOperacoes {
 	public static void Execucao() {
 		
 		switch (op) {
-		case "ADD":
+		case 2:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -52,7 +52,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "MOV":
+		case 1:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -71,7 +71,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "SUB":
+		case 3:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -97,7 +97,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "MUL":
+		case 4:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -124,7 +124,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "INC":
+		case 12:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -141,7 +141,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "DEC":
+		case 13:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
@@ -158,7 +158,7 @@ public class MicroOperacoes {
 			}
 			break;
 
-		case "DIV":
+		case 5:
 			if (indirecao == 1) {
 				//tipo1
 				tipo = 1;
