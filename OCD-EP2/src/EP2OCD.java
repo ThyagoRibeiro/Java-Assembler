@@ -11,7 +11,9 @@
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
+import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,9 +22,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.text.BadLocationException;
 
 import util.Conversoes;
@@ -155,19 +161,25 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		String[][] memoryContent;
 
-		// memoryContent = new String[200][2];
 		memoryContent = new String[][] { { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
 				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
 				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
 				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" } };
 
-		for (int i = 0; i < memoria.getSize(); i++) {
-			memoryContent[i][0] = Integer.toString(i);
-			memoryContent[i][1] = memoria.getString(i);
+		int i = 0;
+
+		for (Entry<Integer, String> entry : memoria.getEntrySet()) {
+			Integer key = entry.getKey();
+			String value = entry.getValue();
+
+			memoryContent[i][0] = Integer.toString(key);
+			memoryContent[i][1] = value;
+
+			i++;
 		}
 
-		for (int i = memoria.getSize(); i < 30; i++) {
-			memoryContent[i][0] = memoryContent[i][1] = "";
+		for (int j = memoria.getSize(); j < 30; j++) {
+			memoryContent[j][0] = memoryContent[j][1] = "";
 		}
 
 		tableMemory.setModel(new DefaultTableModel(memoryContent, memoryHeader) {
@@ -184,6 +196,14 @@ public class EP2OCD extends javax.swing.JFrame {
 		if (tableMemory.getColumnModel().getColumnCount() > 0) {
 			tableMemory.getColumnModel().getColumn(0).setPreferredWidth(5);
 		}
+
+		// tableMemory.setAutoCreateRowSorter(true);
+		// DefaultRowSorter sorter =
+		// ((DefaultRowSorter)tableMemory.getRowSorter());
+		// ArrayList list = new ArrayList();
+		// list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING) );
+		// sorter.setSortKeys(list);
+		// sorter.sort();
 
 		tableMemory.setBackground(Color.WHITE);
 		tableMemory.setGridColor(Color.BLACK);
@@ -619,33 +639,33 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		return (String) tableFlags.getModel().getValueAt(0, column);
 	}
-	
+
 	public void setLblAx(int[] bin) {
-		String text = Conversoes.array2String(bin);
-		this.lblAxBin.setText(Conversoes.addZeros(text, 2));
-		this.lblAxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
-		this.lblAxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
+		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
+		this.lblAxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
+		this.lblAxDec.setText(Conversoes.changeStringLenght(dec, 10));
+		this.lblAxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
 	}
 
 	public void setLblBx(int[] bin) {
-		String text = Conversoes.array2String(bin);
-		this.lblBxBin.setText(Conversoes.addZeros(text, 2));
-		this.lblBxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
-		this.lblBxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
+		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
+		this.lblBxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
+		this.lblBxDec.setText(Conversoes.changeStringLenght(dec, 10));
+		this.lblBxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
 	}
 
 	public void setLblCx(int[] bin) {
-		String text = Conversoes.array2String(bin);
-		this.lblCxBin.setText(Conversoes.addZeros(text, 2));
-		this.lblCxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
-		this.lblCxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
+		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
+		this.lblCxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
+		this.lblCxDec.setText(Conversoes.changeStringLenght(dec, 10));
+		this.lblCxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
 	}
 
 	public void setLblDx(int[] bin) {
-		String text = Conversoes.array2String(bin);
-		this.lblDxBin.setText(Conversoes.addZeros(text, 2));
-		this.lblDxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
-		this.lblDxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
+		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
+		this.lblDxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
+		this.lblDxDec.setText(Conversoes.changeStringLenght(dec, 10));
+		this.lblDxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
 	}
 
 	public void setLblIrOpcodeValue(String text) {
@@ -715,18 +735,20 @@ public class EP2OCD extends javax.swing.JFrame {
 
 			textPanelCode.setEnabled(false);
 			running = true;
+			clearRegisters();
 
 			memoria.limparMemoria();
 
 			for (String line : code) {
 				firmware.codigoParaPalavra(line);
 			}
+
+			firmware.atualizaPc(memoria.getSize());
 			firmware.enviarCodigoParaMemoria();
-			//firmware.atualizaPc(index);
 		}
 
-		//firmware.cicloInstrucao();
-		
+		// firmware.cicloInstrucao();
+
 		String newCode = "";
 
 		if (index + 1 >= code.size()) {
@@ -753,6 +775,31 @@ public class EP2OCD extends javax.swing.JFrame {
 		updateTableMemory();
 
 		index++;
+	}
+
+	private void clearRegisters() {
+
+		lblAxHex.setText("0000");
+		lblBxHex.setText("0000");
+		lblCxHex.setText("0000");
+		lblDxHex.setText("0000");
+
+		lblAxDec.setText(" 00000");
+		lblBxDec.setText(" 00000");
+		lblCxDec.setText(" 00000");
+		lblDxDec.setText(" 00000");
+
+		lblAxBin.setText("0000000000000000");
+		lblBxBin.setText("0000000000000000");
+		lblCxBin.setText("0000000000000000");
+		lblDxBin.setText("0000000000000000");
+
+		lblMbrValue.setText("0000");
+		lblMarValue.setText("0000");
+		lblPcValue.setText("0000");
+		lblIrOpcodeValue.setText("0000");
+		lblIrP1Value.setText("000000");
+		lblIrP2Value.setText("000000");
 	}
 
 	public String getPalavra(int endereco) {

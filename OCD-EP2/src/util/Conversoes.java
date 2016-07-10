@@ -11,9 +11,9 @@ public class Conversoes {
 		return Long.toHexString(Long.parseLong(number, 2)).toUpperCase();
 	}
 
-	public static String dec2bin(long number) {
+	public static String dec2bin(int number) {
 
-		return Long.toBinaryString(number);
+		return Integer.toBinaryString(number);
 	}
 
 	public static String dec2hex(int number) {
@@ -63,13 +63,13 @@ public class Conversoes {
 		}
 
 		number = number + "}";
-		
+
 		return number;
 
 	}
 
 	public static int[] string2IntArray(String number) {
-		
+
 		int[] array = new int[number.length()];
 
 		for (int i = 0; i < array.length; i++) {
@@ -79,7 +79,7 @@ public class Conversoes {
 		return array;
 	}
 
-	public static String addZeros(String number, int radix) {
+	public static String changeStringLenght(String number, int radix) {
 
 		switch (radix) {
 		case 2:
@@ -152,14 +152,27 @@ public class Conversoes {
 		return number;
 	}
 
-	public static int[] expandArray(int[] number, int n) {
+	
+	
+	public static int[] changeSizeArray(int[] number, int n, int c) {
 
 		int[] array = new int[n];
 
-		for (int i = 0; i < number.length; i++) {
-			array[(array.length - 1) - i] = number[(number.length - 1) - i];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = c;
 		}
 
+		if (n > number.length) {
+
+			for (int i = 0; i < number.length; i++) {
+				array[(array.length - 1) - i] = number[(number.length - 1) - i];
+			}
+
+		} else {
+			for (int i = 0; i < array.length; i++) {
+				array[(array.length - 1) - i] = number[(number.length - 1) - i];
+			}
+		}
 		return array;
 	}
 
