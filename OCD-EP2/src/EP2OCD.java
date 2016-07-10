@@ -615,6 +615,11 @@ public class EP2OCD extends javax.swing.JFrame {
 		updateTableFlags();
 	}
 
+	public String getFlagTableValue(int column) {
+
+		return (String) tableFlags.getModel().getValueAt(0, column);
+	}
+	
 	public void setLblAx(int[] bin) {
 		String text = Conversoes.array2String(bin);
 		this.lblAxBin.setText(Conversoes.addZeros(text, 2));
@@ -684,7 +689,7 @@ public class EP2OCD extends javax.swing.JFrame {
 		runLine();
 		firmware.atualizaPc(8);
 		firmware.cicloInstrucao();
-		
+
 	}
 
 	private void getCode() {
@@ -718,8 +723,11 @@ public class EP2OCD extends javax.swing.JFrame {
 				firmware.codigoParaPalavra(line);
 			}
 			firmware.enviarCodigoParaMemoria();
+			firmware.atualizaPc(index);
 		}
 
+		firmware.cicloInstrucao();
+		
 		String newCode = "";
 
 		if (index + 1 >= code.size()) {
@@ -731,9 +739,7 @@ public class EP2OCD extends javax.swing.JFrame {
 		}
 
 		for (String line : code) {
-			
 
-			
 			if (!line.isEmpty()) {
 
 				if (line.contains("div"))
@@ -749,10 +755,11 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		index++;
 	}
+
 	public String getPalavra(int endereco) {
 		return memoria.getPalavra(endereco);
 	}
-	
+
 	public int adicionarLinha(String palavra) {
 		return memoria.adicionarLinha(palavra);
 	}
@@ -760,7 +767,7 @@ public class EP2OCD extends javax.swing.JFrame {
 	public void atualizarLinha(int endereco, String palavra) {
 		// TODO Auto-generated method stub
 		memoria.atualizarLinha(endereco, palavra);
+		updateTableMemory();
 	}
-
 
 }

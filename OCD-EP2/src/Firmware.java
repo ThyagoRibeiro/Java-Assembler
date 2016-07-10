@@ -52,7 +52,7 @@ public class Firmware {
 //		Memoria mem = new Memoria();
 //		mem.adicionarLinha("101");
 
-		Busca();
+//		Busca();
 	}
 
 	public void atualiza(Registrador p1) {
@@ -104,7 +104,7 @@ public class Firmware {
 		// MBR <-- MEMORIA
 		String pc = Conversoes.array2String(registradores[MAR].getDados());
 		int endereco = Conversoes.bin2dec(pc);
-		// registradores[MBR].setDados(Conversoes.string2IntArray(ep2ocd.memoria.getPalavra(endereco)));
+		 registradores[MBR].setDados(Conversoes.string2IntArray(ep2ocd.getPalavra(endereco)));
 		// Atualiza interface
 		atualiza(registradores[MBR]);
 		// incrementa PC
@@ -592,12 +592,6 @@ public class Firmware {
 		} else {
 			// trata endereco de memoria
 
-			System.out
-					.println(Conversoes.array2String(
-							Conversoes.string2IntArray(
-									Conversoes.dec2bin(Integer.parseInt(p1String.replace("[", "").replace("]", "")))),
-					", "));
-
 			palavra = preencherArray(palavra,
 					Conversoes.expandArray(
 							Conversoes.string2IntArray(
@@ -631,15 +625,13 @@ public class Firmware {
 					Conversoes.expandArray(
 							Conversoes.string2IntArray(
 									Conversoes.dec2bin(Integer.parseInt(p1String.replace("[", "").replace("]", "")))),
-					6), 4);
+					6), 10);
 		}
 
 		arrayPalavras.add(Conversoes.array2String(palavra, ", "));
 	}
 
 	private int[] preencherArray(int[] array1, int[] array2, int c) {
-
-		System.out.println(Conversoes.array2String(array2, ", "));
 		
 		for (int i = 0; i < array2.length; i++) {
 			array1[i + c] = array2[i];
