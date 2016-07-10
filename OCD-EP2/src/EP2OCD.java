@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,13 +21,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.text.BadLocationException;
 
 import util.Conversoes;
@@ -739,12 +734,11 @@ public class EP2OCD extends javax.swing.JFrame {
 
 			memoria.limparMemoria();
 
-			for (String line : code) {
-				firmware.codigoParaPalavra(line);
+			for (int i = 0; i < code.size(); i++) {
+				firmware.codigoParaPalavra(code.get(i), i);
 			}
-
-			firmware.atualizaPc(memoria.getSize());
-			firmware.enviarCodigoParaMemoria();
+			
+			firmware.enviarCodigoParaMemoria(memoria.getSize());
 		}
 
 		// firmware.cicloInstrucao();
