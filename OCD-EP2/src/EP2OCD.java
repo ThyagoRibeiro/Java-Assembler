@@ -10,6 +10,8 @@
  */
 
 import java.awt.Color;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -85,10 +87,10 @@ public class EP2OCD extends javax.swing.JFrame {
 	private JTable tableMemory;
 	private JTextPane textPanelCode;
 	private JTextArea textAreaMicroOperations;
-	public Memoria memoria;
+	private Memoria memoria;
 	private Firmware firmware;
 	private boolean running;
-	String[] code;
+	ArrayList<String> code;
 
 	public static void main(String[] args) {
 		try {
@@ -99,13 +101,13 @@ public class EP2OCD extends javax.swing.JFrame {
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			System.out.println(1);
+			ex.printStackTrace();
 		} catch (InstantiationException ex) {
-			System.out.println(2);
+			ex.printStackTrace();
 		} catch (IllegalAccessException ex) {
-			System.out.println(3);
+			ex.printStackTrace();
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			System.out.println(4);
+			ex.printStackTrace();
 		}
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
@@ -119,7 +121,6 @@ public class EP2OCD extends javax.swing.JFrame {
 	public EP2OCD() {
 
 		iniciarComponentes();
-		memoria = new Memoria();
 		firmware = new Firmware(this);
 	}
 
@@ -154,15 +155,12 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		String[][] memoryContent;
 
-//		memoryContent = new String[200][2];
+		// memoryContent = new String[200][2];
+		memoryContent = new String[][] { { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
+				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
+				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" },
+				{ "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" }, { "", "" } };
 
-		
-		if (memoria.getSize() >= 30) {
-			memoryContent = new String[memoria.getSize()][2];
-		} else {
-			memoryContent = new String[30][2];
-		}
-		
 		for (int i = 0; i < memoria.getSize(); i++) {
 			memoryContent[i][0] = Integer.toString(i);
 			memoryContent[i][1] = memoria.getPalavra(i);
@@ -582,6 +580,8 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		// Adiciona painel da memoria ao menu com abas
 		tabbedPanel.addTab("Memória", jPanel6);
+		memoria = new Memoria();
+		updateTableMemory();
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -616,28 +616,28 @@ public class EP2OCD extends javax.swing.JFrame {
 	}
 
 	public void setLblAx(int[] bin) {
-		String text = Conversoes.bin(bin);
+		String text = Conversoes.array2String(bin);
 		this.lblAxBin.setText(Conversoes.addZeros(text, 2));
 		this.lblAxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
 		this.lblAxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblBx(int[] bin) {
-		String text = Conversoes.bin(bin);
+		String text = Conversoes.array2String(bin);
 		this.lblBxBin.setText(Conversoes.addZeros(text, 2));
 		this.lblBxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
 		this.lblBxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblCx(int[] bin) {
-		String text = Conversoes.bin(bin);
+		String text = Conversoes.array2String(bin);
 		this.lblCxBin.setText(Conversoes.addZeros(text, 2));
 		this.lblCxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
 		this.lblCxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
 	}
 
 	public void setLblDx(int[] bin) {
-		String text = Conversoes.bin(bin);
+		String text = Conversoes.array2String(bin);
 		this.lblDxBin.setText(Conversoes.addZeros(text, 2));
 		this.lblDxDec.setText(Conversoes.addZeros(Integer.toString(Conversoes.bin2dec(text)), 10));
 		this.lblDxHex.setText(Conversoes.addZeros(Conversoes.bin2hex(text), 16));
@@ -669,59 +669,98 @@ public class EP2OCD extends javax.swing.JFrame {
 
 	private void btnExecActionPerformed(java.awt.event.ActionEvent evt) {
 
-		System.out.println("exec");
+		getCode();
 
-		for (String strings : textPanelCode.getText().split("\n")) {
-			System.out.println(strings);
+		for (int i = 0; i < code.size(); i++) {
+			getCode();
+			runLine();
 		}
 
 	}
 
 	private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {
 
+		getCode();
+		runLine();
+		firmware.atualizaPc(8);
+		firmware.cicloInstrucao();
+		
+	}
+
+	private void getCode() {
+
+		code = new ArrayList<>();
+
 		try {
-			code = textPanelCode.getDocument().getText(1, textPanelCode.getDocument().getLength()).split("\n");
+
+			for (String line : textPanelCode.getDocument().getText(0, textPanelCode.getDocument().getLength())
+					.split("\n", -1)) {
+				if (!line.isEmpty())
+					code.add(line);
+			}
+
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	private void runLine() {
 
 		if (!running) {
 
 			textPanelCode.setEnabled(false);
 			running = true;
-			index = 0;
 
 			memoria.limparMemoria();
-			
-			for (String line : code) {
-				memoria.adicionarLinha(line);
-			}
 
-			updateTableMemory();
+			for (String line : code) {
+				firmware.codigoParaPalavra(line);
+			}
+			firmware.enviarCodigoParaMemoria();
 		}
 
 		String newCode = "";
 
-		code[index] = "<div style=\"background-color:red\">".concat(code[index]).concat("</div>");
+		if (index + 1 >= code.size()) {
+			running = false;
+			textPanelCode.setEnabled(true);
+			index = -1;
+		} else {
+			code.set(index, "<div style=\"background-color:red\">".concat(code.get(index)).concat("</div>"));
+		}
 
 		for (String line : code) {
+			
 
-			if (!line.equals("")) {
+			
+			if (!line.isEmpty()) {
 
 				if (line.contains("div"))
 					newCode = newCode + line;
 				else
 					newCode = newCode + "<p style=\"margin-top: 0\">" + line + "</p>";
-
 			}
+
 		}
 
 		textPanelCode.setText(newCode);
-		if (++index >= code.length) {
-			running = false;
-			textPanelCode.setEnabled(true);
-		}
+		updateTableMemory();
 
+		index++;
 	}
+	public String getPalavra(int endereco) {
+		return memoria.getPalavra(endereco);
+	}
+	
+	public int adicionarLinha(String palavra) {
+		return memoria.adicionarLinha(palavra);
+	}
+
+	public void atualizarLinha(int endereco, String palavra) {
+		// TODO Auto-generated method stub
+		memoria.atualizarLinha(endereco, palavra);
+	}
+
 
 }

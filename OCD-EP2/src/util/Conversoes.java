@@ -42,7 +42,7 @@ public class Conversoes {
 		return newGuess;
 	}
 
-	public static String bin(int[] array) {
+	public static String array2String(int[] array) {
 
 		String number = "";
 
@@ -54,14 +54,16 @@ public class Conversoes {
 
 	}
 
-	public static String array2String(int[] array) {
+	public static String array2String(int[] array, String separator) {
 
-		String number = "";
+		String number = "{" + array[0];
 
-		for (int i : array) {
-			number = number + i;
+		for (int i = 1; i < array.length; i++) {
+			number = number + ", " + array[i];
 		}
 
+		number = number + "}";
+		
 		return number;
 
 	}
@@ -85,7 +87,7 @@ public class Conversoes {
 			if (number.length() < 16) {
 
 				char[] charArray = "0000000000000000".toCharArray();
-				
+
 				for (int i = 0; i < number.length(); i++) {
 					charArray[15 - i] = number.charAt((number.length() - 1) - i);
 				}
@@ -113,7 +115,7 @@ public class Conversoes {
 				}
 
 				char[] charArray = " 00000".toCharArray();
-				
+
 				for (int i = 0; i < number.length(); i++) {
 					charArray[5 - i] = number.charAt((number.length() - 1) - i);
 				}
@@ -129,13 +131,13 @@ public class Conversoes {
 			if (number.length() < 4) {
 
 				char[] charArray = "0000".toCharArray();
-				
+
 				for (int i = 0; i < number.length(); i++) {
 					charArray[3 - i] = number.charAt((number.length() - 1) - i);
 				}
 
 				return String.valueOf(charArray);
-				
+
 			} else {
 
 				String newNumber = "";
@@ -149,4 +151,16 @@ public class Conversoes {
 
 		return number;
 	}
+
+	public static int[] expandArray(int[] number, int n) {
+
+		int[] array = new int[n];
+
+		for (int i = 0; i < number.length; i++) {
+			array[(array.length - 1) - i] = number[(number.length - 1) - i];
+		}
+
+		return array;
+	}
+
 }

@@ -7,8 +7,14 @@ public class Memoria {
 	private int endereco;
 	private HashMap<Integer, String> memoriaAtual = new HashMap<>();
 
-	public void adicionarLinha(String palavra) {
+	public Memoria() {
+		iniciarMemoria();
+	}
+	
+	public int adicionarLinha(String palavra) {
+		int temp = endereco;
 		memoriaAtual.put(endereco++, palavra);
+		return temp;
 	}
 
 	public void atualizarLinha(int endereco, String palavra) {
@@ -29,6 +35,16 @@ public class Memoria {
 	
 	public void limparMemoria(){
 		memoriaAtual.clear();
+		iniciarMemoria();
+	}
+	
+	private void iniciarMemoria(){
+		endereco = 0;
+		
+		// registradores
+		for (int i = 0; i < 4; i++) {
+			adicionarLinha("{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}");
+		}
 	}
 	
 }
