@@ -689,28 +689,34 @@ public class EP2OCD extends javax.swing.JFrame {
 	public void setLblAx(int[] bin) {
 
 		this.lblAxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblAxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
-		this.lblAxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
-		
-		System.out.println("ax " + Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
+		this.lblAxDec.setText(
+				Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin))), 10));
+		this.lblAxHex.setText(Conversoes.changeStringLenght(
+				Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)), 16));
 	}
 
 	public void setLblBx(int[] bin) {
 		this.lblBxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblBxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
-		this.lblBxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
+		this.lblBxDec.setText(
+				Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin))), 10));
+		this.lblBxHex.setText(Conversoes.changeStringLenght(
+				Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)), 16));
 	}
 
 	public void setLblCx(int[] bin) {
 		this.lblCxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblCxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
-		this.lblCxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
+		this.lblCxDec.setText(
+				Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin))), 10));
+		this.lblCxHex.setText(Conversoes.changeStringLenght(
+				Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)), 16));
 	}
 
 	public void setLblDx(int[] bin) {
 		this.lblDxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblDxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
-		this.lblDxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
+		this.lblDxDec.setText(
+				Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin))), 10));
+		this.lblDxHex.setText(Conversoes.changeStringLenght(
+				Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)), 16));
 	}
 
 	public void setLblIrOpcodeValue(String text) {
@@ -719,11 +725,13 @@ public class EP2OCD extends javax.swing.JFrame {
 	}
 
 	public void setLblIrP1Value(String text) {
+		System.out.println("p1 " + text);
 		this.lblIrP1Value
 				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 6, 0)));
 	}
 
 	public void setLblIrP2Value(String text) {
+		System.out.println("p2 " + text);
 		this.lblIrP2Value
 				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 6, 0)));
 	}

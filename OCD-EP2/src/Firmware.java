@@ -43,7 +43,8 @@ public class Firmware {
 		int[] dados = p1.getDados();
 		
 		if (p1.isDadoNegativo()) {
-			dados = Conversoes.changeSizeArray(dados, 32, 1);
+			dados = Conversoes.changeSizeArray(dados, 32, dados[0]);
+			p1.setDadoNegativo(false);
 		}
 
 		if (p1.getIndice() == AX)
