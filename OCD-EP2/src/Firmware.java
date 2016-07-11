@@ -21,58 +21,30 @@ public class Firmware {
 	private static final int P1 = 7;
 	private static final int P2 = 8;
 	private static final int OP = 9;
-	int[] OP_array = new int[4];
-	int[] P1_array = new int[6];
-	int[] P2_array = new int[6];
-	private Registrador[] registradores = new Registrador[] { new Registrador(AX, 6, 7), new Registrador(BX, 8, 9),
-			new Registrador(CX, 10, 11), new Registrador(DX, 25, 26), new Registrador(MBR, 4, 5, 22, 21),
-			new Registrador(MAR, 3, 20), new Registrador(PC, 1, 2), new Registrador(P1, 16, 15),
-			new Registrador(P2, 14, 13), new Registrador(OP, 0, 0) };
+	int[] opAdress = new int[4];
+	int[] p1Adress = new int[6];
+	int[] p2Adress = new int[6];
+	private Registrador[] registradores = new Registrador[] { new Registrador("AX", AX, 6, 7),
+			new Registrador("BX", BX, 8, 9), new Registrador("CX", CX, 10, 11), new Registrador("DX", DX, 25, 26),
+			new Registrador("MBR", MBR, 4, 5, 22, 21), new Registrador("MAR", MAR, 3, 20),
+			new Registrador("PC", PC, 1, 2), new Registrador("P1", P1, 16, 15), new Registrador("P2", P2, 14, 13),
+			new Registrador("OP", OP, 0, 0) };
 	private ArrayList<String> arrayPalavras = new ArrayList<>();
 	private HashMap<String, Integer> labels = new HashMap<>();
-	private int CMP, comecoCodigo;
+	private int cmp, comecoCodigo;
+	private MicroOperacoes microOp = new MicroOperacoes();
 
 	public Firmware(EP2OCD ep2ocd) {
 		this.ep2ocd = ep2ocd;
-		// ep2ocd.setFlagTableValue(FlagTypeENUM.A.column, "<");
-		// registradores[AX] = new int []
-		// {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-		// registradores[AX] = registradores[BX];
-		// ep2ocd.setLbl();
-		/*
-		 * Registrador p1 = new Registrador(AX, 6, 7); Registrador p2 = new
-		 * Registrador(BX, 8, 9);
-		 * 
-		 * p1.setDados(Conversoes.string2IntArray((Conversoes.dec2bin(10))));
-		 * p2.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(25)));
-		 * registradores[AX].setDados(p1.getDados());
-		 * 
-		 * atualiza(p1); atualiza(p2);
-		 */
-
-		// ADD(p1,p2,3);
-		// SUB(p1, p2, 3);
-		// MUL(p2, 2);
-		// INC(p1,2);
-		// DEC(p1,2);
-		// MOV(p1,p2,3);
-
-		/*
-		 * ep2ocd.adicionarLinha(
-		 * "{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}");
-		 * ep2ocd.adicionarLinha(
-		 * "{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}");
-		 */
-
-		// cicloInstrucao();
 	}
 
 	public void atualiza(Registrador p1) {
 
 		int[] dados = p1.getDados();
-
-		if (p1.isDadoNegativo())
+		
+		if (p1.isDadoNegativo()) {
 			dados = Conversoes.changeSizeArray(dados, 32, 1);
+		}
 
 		if (p1.getIndice() == AX)
 			ep2ocd.setLblAx(dados);
@@ -99,11 +71,11 @@ public class Firmware {
 	public void verificaFlag(int number) {
 		if (number < 0) {
 			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "-");
-		} else if (number > 0) {
-			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "+");
-		} else {
+		} else if (number == 0) {
 			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, " ");
 			ep2ocd.setFlagTableValue(FlagTypeENUM.Z.column, "0");
+		} else if (number > 0) {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.S.column, "+");
 		}
 
 		if (number % 2 == 0) {
@@ -112,14 +84,24 @@ public class Firmware {
 			ep2ocd.setFlagTableValue(FlagTypeENUM.P.column, "0");
 		}
 
-		if ((long) number > (49 * 10 ^ 10)) {
+		if (number > (Math.pow(2, 16))) {
 			ep2ocd.setFlagTableValue(FlagTypeENUM.C.column, "1");
 		} else {
-			ep2ocd.setFlagTableValue(FlagTypeENUM.C.column, " ");
+			ep2ocd.setFlagTableValue(FlagTypeENUM.C.column, "0");
+		}
+
+		if (number > (Math.pow(2, 16))) {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.O.column, "1");
+		} else {
+			ep2ocd.setFlagTableValue(FlagTypeENUM.O.column, "0");
 		}
 	}
 
 	public void busca() {
+
+		ep2ocd.clearTextAreaMicroOperations();
+		ep2ocd.addTextAreaMicroOperations(microOp.busca());
+
 		// MAR <-- PC
 		registradores[MAR].setDados(registradores[PC].getDados());
 		// Atualiza interface
@@ -139,25 +121,25 @@ public class Firmware {
 		int[] IR = registradores[MBR].getDados();
 
 		for (int i = 0; i < 4; i++) {
-			OP_array[i] = IR[i];
+			opAdress[i] = IR[i];
 		}
 		int g = 0;
 
 		for (int i = 4; i < 10; i++) {
-			P1_array[g] = IR[i];
+			p1Adress[g] = IR[i];
 			g++;
 		}
 		int h = 0;
 		for (int i = 10; i < IR.length; i++) {
-			P2_array[h] = IR[i];
+			p2Adress[h] = IR[i];
 			h++;
 		}
 
-		registradores[OP].setDados(OP_array);
+		registradores[OP].setDados(opAdress);
 		registradores[P1].setDados(
-				Conversoes.string2IntArray(ep2ocd.getPalavra(Conversoes.bin2dec(Conversoes.array2String(P1_array)))));
+				Conversoes.string2IntArray(ep2ocd.getPalavra(Conversoes.bin2dec(Conversoes.array2String(p1Adress)))));
 		registradores[P2].setDados(
-				Conversoes.string2IntArray(ep2ocd.getPalavra(Conversoes.bin2dec(Conversoes.array2String(P2_array)))));
+				Conversoes.string2IntArray(ep2ocd.getPalavra(Conversoes.bin2dec(Conversoes.array2String(p2Adress)))));
 
 		// Atualiza interface
 		atualiza(registradores[OP]);
@@ -165,7 +147,9 @@ public class Firmware {
 		atualiza(registradores[P2]);
 	}
 
-	public void Indirecao(int tipo) {
+	public void indirecao(int tipo) {
+
+		ep2ocd.addTextAreaMicroOperations(microOp.indirecao(tipo));
 
 		switch (tipo) {
 		case 1:
@@ -196,11 +180,11 @@ public class Firmware {
 		}
 	}
 
-	public void MOV(Registrador p1, Registrador p2, int tipo) {
+	public void mov(Registrador p1, Registrador p2, int tipo) {
 		int p1_dec, p2_dec;
 
 		// MAR <-- IR(P2)
-		registradores[MAR].setDados(P2_array);
+		registradores[MAR].setDados(p2Adress);
 		// atualiza interface
 		atualiza(registradores[MAR]);
 		// MBR <-- (memoria)
@@ -219,33 +203,28 @@ public class Firmware {
 		// atualiza registrador
 		registradores[P1].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 
-		// System.out.println("tipo: " + tipo);
-		//
-		// System.out.println("opa " +
-		// Conversoes.bin2dec(Conversoes.array2String(P1_array)));
-
 		// atualiza interface
 		atualiza(registradores[P1]);
 
 		if (tipo == 0) {
 
-			registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))].setDados(registradores[P1].getDados());
-			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]);
+			registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))].setDados(registradores[P1].getDados());
+			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]);
 			atualiza(registradores[P1]);
 		}
 		// ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
 		// Conversoes.array2String(Conversoes.string2IntArray(Conversoes.addZeros(Conversoes.array2String(registradores[P1].getDados()),
 		// 16)), ", "));
-		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
+		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(p1Adress)),
 				Conversoes.array2String(Conversoes.changeSizeArray(registradores[P1].getDados(), 16, 0), ", "));
 
 	}
 
-	public void ADD(Registrador p1, Registrador p2, int tipo) {
+	public void add(Registrador p1, Registrador p2, int tipo) {
 		int p1_dec, p2_dec;
 
 		// MAR <-- IR(P2)
-		registradores[MAR].setDados(P2_array);
+		registradores[MAR].setDados(p2Adress);
 		// atualiza interface
 		atualiza(registradores[MAR]);
 		// MBR <-- (memoria)
@@ -264,33 +243,28 @@ public class Firmware {
 		// atualiza registrador
 		registradores[P1].setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
 
-		// System.out.println("tipo: " + tipo);
-		//
-		// System.out.println("opa " +
-		// Conversoes.bin2dec(Conversoes.array2String(P1_array)));
-
 		// atualiza interface
 		atualiza(registradores[P1]);
 
 		if (tipo == 0) {
 
-			registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))].setDados(registradores[P1].getDados());
-			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]);
+			registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))].setDados(registradores[P1].getDados());
+			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]);
 			atualiza(registradores[P1]);
 		}
 		// ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
 		// Conversoes.array2String(Conversoes.string2IntArray(Conversoes.addZeros(Conversoes.array2String(registradores[P1].getDados()),
 		// 16)), ", "));
-		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
+		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(p1Adress)),
 				Conversoes.array2String(Conversoes.changeSizeArray(registradores[P1].getDados(), 16, 0), ", "));
 
 	}
 
-	public void SUB(Registrador p1, Registrador p2, int tipo) {
+	public void sub(Registrador p1, Registrador p2, int tipo) {
 		int p1_dec, p2_dec;
 
 		// MAR <-- IR(P2)
-		registradores[MAR].setDados(P2_array);
+		registradores[MAR].setDados(p2Adress);
 		// atualiza interface
 		atualiza(registradores[MAR]);
 		// MBR <-- (memoria)
@@ -312,43 +286,34 @@ public class Firmware {
 
 		int[] valor = Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec));
 
-		if (valor.length > 16) {
+		if (p1_dec < 0) {
 			valor = Conversoes.changeSizeArray(valor, 16, 0);
 			registradores[P1].setDadoNegativo(true);
 
 			if (tipo == 0) {
-				registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))].setDadoNegativo(true);
+				registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))].setDadoNegativo(true);
 			}
 
 		}
 
-		// System.out.println("tipo: " + tipo);
-		//
-		// System.out.println("opa " +
-		// Conversoes.bin2dec(Conversoes.array2String(P1_array)));
-
-		// atualiza interface
-
-		atualiza(registradores[P1]);
+		// // atualiza interface
+		// atualiza(registradores[P1]);
 
 		if (tipo == 0) {
-
-			registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))].setDados(registradores[P1].getDados());
-			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]);
+			registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))].setDados(registradores[P1].getDados());
+			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]);
 			atualiza(registradores[P1]);
-
 		}
 		// ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
 		// Conversoes.array2String(Conversoes.string2IntArray(Conversoes.addZeros(Conversoes.array2String(registradores[P1].getDados()),
 		// 16)), ", "));
-		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
+		ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(p1Adress)),
 				Conversoes.array2String(Conversoes.changeSizeArray(registradores[P1].getDados(), 16, 0), ", "));
 
-		if (registradores[P1].isDadoNegativo())
-			registradores[P1].setDadoNegativo(false);
+		registradores[P1].setDadoNegativo(false);
 	}
 
-	public void MUL(Registrador p1, int tipo) {
+	public void mul(Registrador p1, int tipo) {
 
 		int ax, p1_dec;
 		ax = Conversoes.bin2dec(Conversoes.array2String(registradores[AX].getDados()));
@@ -377,7 +342,7 @@ public class Firmware {
 
 	}
 
-	public void DIV(Registrador p1, int tipo) {
+	public void div(Registrador p1, int tipo) {
 		int ax, temp, p1_dec;
 		ax = Conversoes.bin2dec(Conversoes.array2String(registradores[AX].getDados()));
 		temp = ax;
@@ -435,11 +400,11 @@ public class Firmware {
 
 		// atualiza registrador
 		if (tipo == 0) {
-			registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]
+			registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]
 					.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
-			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]);
+			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]);
 		} else {
-			ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
+			ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(p1Adress)),
 					Conversoes.array2String(Conversoes.changeSizeArray(registradores[P1].getDados(), 16, 0), ", "));
 
 		}
@@ -471,11 +436,11 @@ public class Firmware {
 
 		// atualiza registrador
 		if (tipo == 0) {
-			registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]
+			registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]
 					.setDados(Conversoes.string2IntArray(Conversoes.dec2bin(p1_dec)));
-			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(P1_array))]);
+			atualiza(registradores[Conversoes.bin2dec(Conversoes.array2String(p1Adress))]);
 		} else {
-			ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(P1_array)),
+			ep2ocd.atualizarLinha(Conversoes.bin2dec(Conversoes.array2String(p1Adress)),
 					Conversoes.array2String(Conversoes.changeSizeArray(registradores[P1].getDados(), 16, 0), ", "));
 
 		}
@@ -489,73 +454,90 @@ public class Firmware {
 		// memoria - registrador
 		case 1:
 			int compara = Integer.parseInt((ep2ocd.getPalavra(p1_decimal)));
-			CMP = compara - p2_decimal;
-			verificaFlag(CMP);
+			cmp = compara - p2_decimal;
+			if (cmp <= 0) {
+
+			}
 			break;
 		// registrador - memoria
 		case 2:
 			int compara2 = Integer.parseInt((ep2ocd.getPalavra(p2_decimal)));
-			CMP = p1_decimal - compara2;
-			verificaFlag(CMP);
+			cmp = p1_decimal - compara2;
+			verificaFlag(cmp);
 			break;
 		// registrador - registrador
 		case 3:
 			p1_decimal = Conversoes.bin2dec(Conversoes.array2String(p1.getDados()));
 			p2_decimal = Conversoes.bin2dec(Conversoes.array2String(p2.getDados()));
-			CMP = p1_decimal - p2_decimal;
-			verificaFlag(CMP);
+			cmp = p1_decimal - p2_decimal;
+			verificaFlag(cmp);
 			break;
 		}
 
 	}
 
 	public void jnz() {
-
-		if (ep2ocd.getFlagTableValue(6) == null) {
+		if (ep2ocd.getFlagTableValue(6).equals(" ")) {
 			// PULA PRA LABEL
 		}
 
 	}
 
 	public void jz() {
-		if (ep2ocd.getFlagTableValue(6) != null) {
+		if (ep2ocd.getFlagTableValue(6).equals("0")) {
 			// PULA PRA LABEL
 		}
 	}
 
 	public void jle() {
-		if (CMP <= 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(6) != "0" && ep2ocd.getFlagTableValue(5).equals("-")) {
+			// 1º parametro é menor
+		} else if (ep2ocd.getFlagTableValue(6) != "0" && ep2ocd.getFlagTableValue(5).equals("-")) {
+			// 2º parametro é menor
+		} else if (ep2ocd.getFlagTableValue(6).equals("0")) {
+			// parametros sao iguais
 		}
 	}
 
 	public void jl() {
-		if (CMP < 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(5).equals("-")) {
+			// 1º parametro é menor
+		} else if (ep2ocd.getFlagTableValue(5).equals("+")) {
+			// 2º parametro é menor
 		}
 	}
 
 	public void jge() {
-		if (CMP >= 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(6) != "0" && ep2ocd.getFlagTableValue(5).equals("+")) {
+			// 1º parametro é maior
+		} else if (ep2ocd.getFlagTableValue(6) != "0" && ep2ocd.getFlagTableValue(5).equals("-")) {
+			// 2º parametro é maior
+		} else if (ep2ocd.getFlagTableValue(6).equals("0")) {
+			// parametros sao iguais
 		}
 	}
 
 	public void jg() {
-		if (CMP > 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(5).equals("+")) {
+			// 1º parametro é maior
+		} else if (ep2ocd.getFlagTableValue(5).equals("-")) {
+			// 2º parametro é maior
 		}
 	}
 
 	public void jne() {
-		if (CMP != 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(6) != "0") {
+			// parametros sao diferentes
+		} else {
+			// parametros sao iguais
 		}
 	}
 
 	public void je() {
-		if (CMP == 0) {
-			// PULA PRA LABEL
+		if (ep2ocd.getFlagTableValue(6).equals("0")) {
+			// parametros iguais
+		} else {
+			// parametros diferentes
 		}
 	}
 
@@ -564,75 +546,67 @@ public class Firmware {
 	}
 
 	public void executa_opcode(int opcode, int tipo, int indirecao) {
-		MicroOperacoes microop = new MicroOperacoes(opcode, registradores[P1], registradores[P2], indirecao);
 
-		if (opcode == 1) {
-			MOV(registradores[P1], registradores[P2], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 2) {
-			ADD(registradores[P1], registradores[P2], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 3) {
-			SUB(registradores[P1], registradores[P2], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 4) {
-			MUL(registradores[P1], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 5) {
-			DIV(registradores[P1], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 6) {
-			
-			microop.Execucao();
-		}
-		if (opcode == 7) {
+		ep2ocd.addTextAreaMicroOperations(microOp.execucao(registradores[P1], registradores[P2], 1, tipo));
+
+		switch (opcode) {
+		case 1:
+			mov(registradores[P1], registradores[P2], tipo);
+			break;
+		case 2:
+			add(registradores[P1], registradores[P2], tipo);
+			break;
+		case 3:
+			sub(registradores[P1], registradores[P2], tipo);
+			break;
+		case 4:
+			mul(registradores[P1], tipo);
+			break;
+		case 5:
+			div(registradores[P1], tipo);
+			break;
+		case 6:
+			// JE
+			// if(){
+			// registradores[PC].setDados(Conversoes.int2array(labels.get(p2)));
+			// op2ocd.setindex(comecoCodigo + );
+			// }
+			break;
+		case 7:
 			// JNE;
-			microop.Execucao();
-		}
-		if (opcode == 8) {
-			// Jl;
-			microop.Execucao();
-		}
-		if (opcode == 9) {
+			break;
+		case 8:
+			// JL;
+			break;
+		case 9:
 			// JlE;
-			microop.Execucao();
-		}
-		if (opcode == 10) {
-			// Jg;
-			microop.Execucao();
-		}
-		if (opcode == 11) {
-			// JgE;
-			microop.Execucao();
-		}
-		if (opcode == 12) {
+			break;
+		case 10:
+			// JG;
+			break;
+		case 11:
+			// JGE;
+			break;
+		case 12:
 			INC(registradores[P1], tipo);
-			microop.Execucao();
-		}
-		if (opcode == 13) {
+			break;
+		case 13:
 			// DEC;
 			DEC(registradores[P1], tipo);
-			microop.Execucao();
+			break;
 		}
 	}
 
 	public void cicloInstrucao() {
 
 		busca();
-		MicroOperacoes microop_busca = new MicroOperacoes(0, registradores[P1], registradores[P2], 0);
-		microop_busca.Busca();
 
 		int p1_dec = Conversoes.bin2dec(Conversoes.array2String(registradores[P1].getDados()));
 		int p2_dec = Conversoes.bin2dec(Conversoes.array2String(registradores[P2].getDados()));
 		int opcode = Conversoes.bin2dec(Conversoes.array2String(registradores[OP].getDados()));
 
 		// COM APENAS UM PARAMETRO
-		if (Conversoes.bin2dec(Conversoes.array2String(P1_array)) < 4) {
+		if (Conversoes.bin2dec(Conversoes.array2String(p1Adress)) < 4) {
 			// registrador tipo 0
 			executa_opcode(opcode, 0, 2);
 
@@ -650,17 +624,16 @@ public class Firmware {
 
 		opcodeString = codigo.split(" ")[0];
 
-		if (Conversoes.array2String(Conversoes.changeSizeArray(descobrirOpcode(opcodeString), 4, 0)).equals(Conversoes.array2String(Conversoes
-				.string2IntArray("0000")))) {
+		if (Conversoes.array2String(Conversoes.changeSizeArray(descobrirOpcode(opcodeString), 4, 0))
+				.equals(Conversoes.array2String(Conversoes.string2IntArray("0000")))) {
 			// verifica se é label
-			System.out.println("é label");
 			labels.put(opcodeString, n);
 
 		} else {
 
 			if (codigo.split(" ").length >= 2) {
 
-				p1String = codigo.split(" ")[1].replace(",", "");
+				p1String = codigo.split(" ")[1].split(",")[0];
 
 				palavra = preencherArray(palavra, Conversoes.changeSizeArray(descobrirOpcode(opcodeString), 4, 0), 0);
 
@@ -700,9 +673,15 @@ public class Firmware {
 				}
 			}
 
-			if (codigo.split(" ").length == 3) {
+			if (codigo.split(" ").length == 3 || codigo.split(",").length == 2) {
 
-				p2String = codigo.split(" ")[2];
+				if (codigo.contains(", ")) {
+					p2String = codigo.split(" ")[2];
+				} else if (codigo.contains(",")) {
+					p2String = codigo.split(" ")[1].split(",")[1];
+				} else {
+					p2String = codigo.split(" ")[2];
+				}
 
 				if (p2String != null)
 					if (p2String.contains("x")) {
@@ -743,7 +722,6 @@ public class Firmware {
 		}
 		arrayPalavras.add(Conversoes.array2String(palavra, ", "));
 
-
 	}
 
 	private int[] preencherArray(int[] array1, int[] array2, int c) {
@@ -758,6 +736,7 @@ public class Firmware {
 		switch (opcodeString.toUpperCase()) {
 
 		case "ADD":
+
 			return OpcodeENUM.ADD.opcodeArray;
 
 		case "DEC":
@@ -826,17 +805,9 @@ public class Firmware {
 		}
 
 		arrayPalavras.clear();
-		
+
 		this.comecoCodigo = pc;
 		atualizaPc(pc);
-		
-		for (Entry<String, Integer> entry : labels.entrySet()) {
-			String key = entry.getKey();
-			int value = entry.getValue();
-
-			System.out.println("label: " + key + ", pula para " + (value + comecoCodigo));
-
-		}
 	}
 
 }

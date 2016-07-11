@@ -10,6 +10,11 @@
  */
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
@@ -544,9 +549,47 @@ public class EP2OCD extends javax.swing.JFrame {
 
 		// Inicia componentes de micro-operacoes
 		lblDiagramImage.setBackground(new java.awt.Color(255, 255, 255));
-		lblDiagramImage
-				.setIcon(new javax.swing.ImageIcon("C:\\Users\\Thyago Ribeiro\\Desktop\\DiagramaExemplo Pequeno.png")); // NOI18N
+		lblDiagramImage.setIcon(new javax.swing.ImageIcon("src/DiagramaExemplo Pequeno.png")); // NOI18N
 		lblDiagramImage.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+		lblDiagramImage.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				File f = new File("src/DiagramaExemplo.png");
+				Desktop dt = Desktop.getDesktop();
+				try {
+					dt.open(f);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 		textAreaMicroOperations.setEditable(false);
 		textAreaMicroOperations.setColumns(20);
@@ -635,66 +678,78 @@ public class EP2OCD extends javax.swing.JFrame {
 		return (String) tableFlags.getModel().getValueAt(0, column);
 	}
 
+	public void addTextAreaMicroOperations(String text) {
+		textAreaMicroOperations.setText(textAreaMicroOperations.getText() + text + "\n\n");
+	}
+
+	public void clearTextAreaMicroOperations() {
+		textAreaMicroOperations.setText("");
+	}
+
 	public void setLblAx(int[] bin) {
-		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
+
 		this.lblAxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblAxDec.setText(Conversoes.changeStringLenght(dec, 10));
-		this.lblAxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
+		this.lblAxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
+		this.lblAxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
+		
+		System.out.println("ax " + Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
 	}
 
 	public void setLblBx(int[] bin) {
-		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
 		this.lblBxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblBxDec.setText(Conversoes.changeStringLenght(dec, 10));
-		this.lblBxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
+		this.lblBxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
+		this.lblBxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
 	}
 
 	public void setLblCx(int[] bin) {
-		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
 		this.lblCxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblCxDec.setText(Conversoes.changeStringLenght(dec, 10));
-		this.lblCxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
+		this.lblCxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
+		this.lblCxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
 	}
 
 	public void setLblDx(int[] bin) {
-		String dec = Integer.toString(Conversoes.bin2dec(Conversoes.array2String(bin)));
 		this.lblDxBin.setText(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2));
-		this.lblDxDec.setText(Conversoes.changeStringLenght(dec, 10));
-		this.lblDxHex.setText(Conversoes.changeStringLenght(Conversoes.dec2hex(Integer.parseInt(dec)), 16));
+		this.lblDxDec.setText(Conversoes.changeStringLenght(Integer.toString(Conversoes.bin2dec(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2))), 10));
+		this.lblDxHex.setText(Conversoes.changeStringLenght(Conversoes.bin2hex(Conversoes.changeStringLenght(Conversoes.array2String(bin), 2)),16));
 	}
 
 	public void setLblIrOpcodeValue(String text) {
-		this.lblIrOpcodeValue.setText(text);
+		this.lblIrOpcodeValue
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 4, 0)));
 	}
 
 	public void setLblIrP1Value(String text) {
-		this.lblIrP1Value.setText(text);
+		this.lblIrP1Value
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 6, 0)));
 	}
 
 	public void setLblIrP2Value(String text) {
-		this.lblIrP2Value.setText(text);
+		this.lblIrP2Value
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 6, 0)));
 	}
 
 	public void setLblMarValue(String text) {
-		this.lblMarValue.setText(text);
+		this.lblMarValue
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 4, 0)));
 	}
 
 	public void setLblMbrValue(String text) {
-		this.lblMbrValue.setText(text);
+		this.lblMbrValue
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 4, 0)));
 	}
 
 	public void setLblPcValue(String text) {
-		this.lblPcValue.setText(text);
+		this.lblPcValue
+				.setText(Conversoes.array2String(Conversoes.changeSizeArray(Conversoes.string2IntArray(text), 4, 0)));
 	}
 
 	private void btnExecActionPerformed(java.awt.event.ActionEvent evt) {
 
-		getCode();
-
-		for (int i = 0; i < code.size(); i++) {
+		do {
 			getCode();
 			runLine();
-		}
+			firmware.cicloInstrucao();
+		} while (index != 0);
 
 	}
 
@@ -737,11 +792,9 @@ public class EP2OCD extends javax.swing.JFrame {
 			for (int i = 0; i < code.size(); i++) {
 				firmware.codigoParaPalavra(code.get(i), i);
 			}
-			
+
 			firmware.enviarCodigoParaMemoria(memoria.getSize());
 		}
-
-		// firmware.cicloInstrucao();
 
 		String newCode = "";
 
@@ -771,6 +824,10 @@ public class EP2OCD extends javax.swing.JFrame {
 		index++;
 	}
 
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
 	private void clearRegisters() {
 
 		lblAxHex.setText("0000");
@@ -797,17 +854,19 @@ public class EP2OCD extends javax.swing.JFrame {
 	}
 
 	public String getPalavra(int endereco) {
+
 		return memoria.getPalavra(endereco);
 	}
 
 	public int adicionarLinha(String palavra) {
+
 		int mem = memoria.adicionarLinha(palavra);
 		updateTableMemory();
 		return mem;
 	}
 
 	public void atualizarLinha(int endereco, String palavra) {
-		// TODO Auto-generated method stub
+
 		memoria.atualizarLinha(endereco, palavra);
 		updateTableMemory();
 	}

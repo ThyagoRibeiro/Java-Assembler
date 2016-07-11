@@ -152,8 +152,6 @@ public class Conversoes {
 		return number;
 	}
 
-	
-	
 	public static int[] changeSizeArray(int[] number, int n, int c) {
 
 		int[] array = new int[n];

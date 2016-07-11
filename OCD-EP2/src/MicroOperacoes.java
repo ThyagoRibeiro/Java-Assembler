@@ -1,216 +1,156 @@
 public class MicroOperacoes {
-	
-	private static int op;
-	private static Registrador p1;
-	private static Registrador p2;
-	private static String texto;
-	private static int tipo;
-	private static int indirecao; // 1 - Primeiro Parâmetro; 2- Segundo parâmetro; !1||2 Não tem
-	
-	public MicroOperacoes(int op, Registrador p1, Registrador p2, int ind) {
-		this.op = op;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.indirecao = ind;
-	}
-	
-	public static void Busca() {
-		texto = "t1: MAR <-- PC (3 , 2) \n" 
-				+"t2: MBR <-- memória (20, 23, 24, 22) \n" + "t3: ULA <-- PC (2 , 18) \n"
-				+ "    AC <-- ULA (Incremento) \n" 
-				+ "t3: PC <-- AC (1 , 19) \n" 
+
+	private int indirecao; // 1 - Primeiro Parâmetro; 2- Segundo parâmetro;
+							// !1||2 Não tem
+
+	public String busca() {
+		return "Ciclo de Busca\n\nt1: MAR <-- PC (3 , 2) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
+				+ "t3: ULA <-- PC (2 , 18) \n" + "    AC <-- ULA (Incremento) \n" + "t3: PC <-- AC (1 , 19) \n"
 				+ "t4: IR <-- MBR (12 , 5)";
 	}
 
-	public static void Execucao() {
-		
+	public String execucao(Registrador p1, Registrador p2, int op, int indirecao) {
+
+		String texto = "Ciclo de Execução\n\n";
+
 		switch (op) {
-		case 2:
-			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (adição)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
-			} else if (indirecao == 2) {
-				//tipo2
-				tipo = 2;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p1.getIndice() + "(17 , " + p1.getSaida()+ ")\n"
-						  + "    AC <-- ULA (adição)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
-			} else {
-				//tipo3
-				tipo = 3;
-				texto = "t1: ULA <-- "+ p1.getIndice() + "(18 , " + p1.getSaida()+ ")\n"
-						  + "t2: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (adição)\n"
-						  + "t3: AX <-- AC (6, 19)\n ";
-			}
-			break;
 
 		case 1:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: MBR <-- " + p2.getIndice() + " (4 , " + p2.getEntrada() + ") " + "\n";
+				indirecao(indirecao);
+				texto = texto + "t4: MBR <-- " + p2.getNome() + " (4 , " + p2.getEntrada() + ") " + "\n";
 			} else if (indirecao == 2) {
-				//tipo2
-				tipo = 2;
-				Indirecao();
-				texto = texto +  "t4: " + p1.getIndice() + " <-- MBR (" + p1.getEntrada() + " , 5) " + "\n";
+				indirecao(indirecao);
+				texto = texto + "t4: " + p1.getNome() + " <-- MBR (" + p1.getEntrada() + " , 5) " + "\n";
 			} else {
-				//tipo3
-				tipo = 3;
-				texto = "t1: " + p1.getIndice() + " <-- " + p2.getIndice() + " (" + p1.getEntrada() + " , "
+				texto = texto +  "t1: " + p1.getNome() + " <-- " + p2.getNome() + " (" + p1.getEntrada() + " , "
 						+ p2.getEntrada() + ") " + "\n";
+			}
+			break;
+
+		case 2:
+			if (indirecao == 1) {
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p2.getNome() + "(17 , " + p2.getSaida()
+						+ ")\n" + "    AC <-- ULA (adição)\n" + "t6: AX <-- AC (6, 19)\n ";
+			} else if (indirecao == 2) {
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p1.getNome() + "(17 , " + p1.getSaida()
+						+ ")\n" + "    AC <-- ULA (adição)\n" + "t6: AX <-- AC (6, 19)\n ";
+			} else {
+				texto = texto + "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n" + "t2: X <-- "
+						+ p2.getNome() + "(17 , " + p2.getSaida() + ")\n" + "    AC <-- ULA (adição)\n"
+						+ "t3: AX <-- AC (6, 19)\n ";
 			}
 			break;
 
 		case 3:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Subtração)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p2.getNome() + "(17 , " + p2.getSaida()
+						+ ")\n" + "    AC <-- ULA (Subtração)\n" + "t6: AX <-- AC (6, 19)\n ";
 			} else if (indirecao == 2) {
-				//tipo2
-				tipo = 2;
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p1.getIndice() + "(17 , " + p1.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Subtração)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
+
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p1.getNome() + "(17 , " + p1.getSaida()
+						+ ")\n" + "    AC <-- ULA (Subtração)\n" + "t6: AX <-- AC (6, 19)\n ";
 			} else {
-				//tipo3
-				tipo = 3;
-				texto =   "t1: ULA <-- "+ p1.getIndice() + "(18 , " + p1.getSaida()+ ")\n"
-						  + "t2: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Subtração)\n"
-						  + "t3: AX <-- AC (6, 19)\n ";
+
+				texto = texto + "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n" + "t2: X <-- "
+						+ p2.getNome() + "(17 , " + p2.getSaida() + ")\n" + "    AC <-- ULA (Subtração)\n"
+						+ "t3: AX <-- AC (6, 19)\n ";
 			}
 			break;
 
 		case 4:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Multiplicação)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p2.getNome() + "(17 , " + p2.getSaida()
+						+ ")\n" + "    AC <-- ULA (Multiplicação)\n" + "t6: AX <-- AC (6, 19)\n ";
 			} else if (indirecao == 2) {
-				//tipo2
-				tipo = 2;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p1.getIndice() + "(17 , " + p1.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Multiplicação)\n"
-						  + "t6: AX <-- AC (6, 19)\n ";
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p1.getNome() + "(17 , " + p1.getSaida()
+						+ ")\n" + "    AC <-- ULA (Multiplicação)\n" + "t6: AX <-- AC (6, 19)\n ";
 			} else {
-				//tipo3
-				tipo = 3;
-				texto =   "t1: ULA <-- "+ p1.getIndice() + "(18 , " + p1.getSaida()+ ")\n"
-						  + "t2: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Multiplicação)\n"
-						  + "t3: AX <-- AC (6, 19)\n ";
+
+				texto = texto + "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n" + "t2: X <-- "
+						+ p2.getNome() + "(17 , " + p2.getSaida() + ")\n" + "    AC <-- ULA (Multiplicação)\n"
+						+ "t3: AX <-- AC (6, 19)\n ";
 			}
 			break;
 
 		case 12:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"						  
-						  + "    AC <-- ULA (Incremento)\n"
-						  + "t5: " +p1.getIndice() + " <-- AC ("+p1.getEntrada()+", 19)\n ";
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "    AC <-- ULA (Incremento)\n" + "t5: " + p1.getNome()
+						+ " <-- AC (" + p1.getEntrada() + ", 19)\n ";
 			} else {
-				//tipo2	
-				tipo = 2;
-				texto =  	"t1: ULA <-- "+ p1.getIndice() +"(18 , " + p1.getSaida() + ")\n"						  
-						  + "    AC <-- ULA (Incremento)\n"
-						  + "t2: "+p1.getIndice() + " <-- AC ("+p1.getEntrada()+", 19)\n ";
+
+				texto = texto +  "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n"
+						+ "    AC <-- ULA (Incremento)\n" + "t2: " + p1.getNome() + " <-- AC (" + p1.getEntrada()
+						+ ", 19)\n ";
 			}
 			break;
 
 		case 13:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"						  
-						  + "    AC <-- ULA (Decremento)\n"
-						  + "t5: " +p1.getIndice() + " <-- AC ("+p1.getEntrada()+", 19)\n ";			
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "    AC <-- ULA (Decremento)\n" + "t5: " + p1.getNome()
+						+ " <-- AC (" + p1.getEntrada() + ", 19)\n ";
 			} else {
-				//tipo2
-				tipo = 2;
-				texto =  	"t1: ULA <-- "+ p1.getIndice() +"(18 , " + p1.getSaida() + ")\n"						  
-						  + "    AC <-- ULA (Decremento)\n"
-						  + "t2: " + p1.getIndice() + " <-- AC ("+p1.getEntrada()+", 19)\n ";
+
+				texto = "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n"
+						+ "    AC <-- ULA (Decremento)\n" + "t2: " + p1.getNome() + " <-- AC (" + p1.getEntrada()
+						+ ", 19)\n ";
 			}
 			break;
 
 		case 5:
 			if (indirecao == 1) {
-				//tipo1
-				tipo = 1;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Divisão)\n"
-						  + "t6: AX <-- AC (6, 19)\n "
-						  + "    AC <-- ULA (resto)\n"
-						  + "t7: DX <-- AC (25 , 19)\n";;
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p2.getNome() + "(17 , " + p2.getSaida()
+						+ ")\n" + "    AC <-- ULA (Divisão)\n" + "t6: AX <-- AC (6, 19)\n " + "    AC <-- ULA (resto)\n"
+						+ "t7: DX <-- AC (25 , 19)\n";
+
 			} else if (indirecao == 2) {
-				//tipo2
-				tipo = 2;
-				Indirecao();
-				texto = texto + "t4: ULA <-- MBR(18 , 5)\n"
-						  + "t5: X <-- " + p1.getIndice() + "(17 , " + p1.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Divisão)\n"
-						  + "t6: AX <-- AC (6, 19)\n "
-						  + "    AC <-- ULA (resto)\n"
-						  + "t7: DX <-- AC (25 , 19)\n";
+
+				indirecao(indirecao);
+				texto = texto + "t4: ULA <-- MBR(18 , 5)\n" + "t5: X <-- " + p1.getNome() + "(17 , " + p1.getSaida()
+						+ ")\n" + "    AC <-- ULA (Divisão)\n" + "t6: AX <-- AC (6, 19)\n " + "    AC <-- ULA (resto)\n"
+						+ "t7: DX <-- AC (25 , 19)\n";
 			} else {
-				//tipo3
-				tipo = 3;
-				texto =   "t1: ULA <-- "+ p1.getIndice() + "(18 , " + p1.getSaida()+ ")\n"
-						  + "t2: X <-- " + p2.getIndice() + "(17 , " + p2.getSaida()+ ")\n"
-						  + "    AC <-- ULA (Divisão)\n"
-						  + "t3: AX <-- AC (6, 19)\n "
-						  + "    AC <-- ULA (resto)\n"
-						  + "t4: DX <-- AC (25 , 19)\n";
-				
+
+				texto = texto +  "t1: ULA <-- " + p1.getNome() + "(18 , " + p1.getSaida() + ")\n" + "t2: X <-- "
+						+ p2.getNome() + "(17 , " + p2.getSaida() + ")\n" + "    AC <-- ULA (Divisão)\n"
+						+ "t3: AX <-- AC (6, 19)\n " + "    AC <-- ULA (resto)\n" + "t4: DX <-- AC (25 , 19)\n";
+
 			}
 			break;
+
 		default:
 			break;
 		}
+
+		return texto;
 	}
 
-	public static void Indirecao() {
-		//tipo 1
-		if (indirecao == 1){
-			tipo = 1;
-			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" 
-					+ "t2: MBR <-- memória (20, 23, 24, 22) \n"
+	public String indirecao(int indirecao) {
+		String texto = "Ciclo de Indireção\n\n";
+		if (indirecao == 1) {
+			texto = "t1: MAR <-- IR(p1) (3 , 15) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p1) <-- MBR (16, 5)";
 		}
-		
-		//tipo 2
-		if (indirecao == 2){
-			tipo = 2;
-			texto = "t1: MAR <-- IR(p2) (3 , 13) \n"
-					+ "t2: MBR <-- memória (20, 23, 24, 22) \n"
+
+		if (indirecao == 2) {
+			texto = "t1: MAR <-- IR(p2) (3 , 13) \n" + "t2: MBR <-- memória (20, 23, 24, 22) \n"
 					+ "t3: IR(p2) <-- MBR (14, 5)";
 		}
+
+		return texto;
 	}
 }
